@@ -1,26 +1,54 @@
 import React, { useState } from 'react';
-import { OutTable, ExcelRenderer } from 'react-excel-renderer';
+import StudentList from "../Components/StudentList";
+import {Accordion, Button, Tab, Tabs} from "react-bootstrap";
+import FileDropZone from "../Components/FileDropZone";
+import {DateRange, DayPicker} from "react-day-picker";
 
-function ExcelViewer() {
-    const [excelData, setExcelData] = useState(null);
+function FileUploadPage() {
 
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        ExcelRenderer(file, (err, response) => {
-            if (err) {
-                console.log(err);
-            } else {
-                setExcelData(response.rows);
-            }
-        });
-    };
-
+    const [key, setKey] = useState("students");
+    const [range, setRange] = useState(0);
     return (
         <div>
-            <input type="file" onChange={handleFileChange} />
-            <OutTable data={excelData} columns={excelData} tableClassName="ExcelTable2007" tableHeaderRowClass="heading" />
+            <Tabs
+                activeKey={key}
+                onSelect={(k) => setKey(k)}
+                fill
+            >
+                <Tab eventKey={"students"} title={"Students"}>
+                    <StudentList/>
+                </Tab>
+                <Tab eventKey={"bonus"} title={"Bonus Hours"}>
+                    <DayPicker
+                        mode ="range"
+                        selected={range}
+                        onSelect={setRange}
+                        />
+                </Tab>
+                <Tab eventKey={"run"} title={"Run Study Hours"}>
+                    <FileDropZone className={"justify-content-center"}></FileDropZone>
+                    <Button
+                        className={"justify-content-center"}
+                    >Run Study Hours</Button>
+                </Tab>
+            </Tabs>
+            {/*<Accordion>
+                <Accordion.Item eventKey={0}>
+                <Accordion.Header>Students</Accordion.Header>
+                <Accordion.Body>
+                    <StudentList/>
+                </Accordion.Body>
+                </Accordion.Item>
+                <Accordion.Item eventKey={1}>
+                    <Accordion.Header>Bonus Hours</Accordion.Header>
+                </Accordion.Item>
+                <Accordion.Item eventKey={2}>
+                    <Accordion.Header>Calculate Study Hours</Accordion.Header>
+                </Accordion.Item>
+            </Accordion>*/}
+
         </div>
     );
 }
 
-export default ExcelViewer;
+export default FileUploadPage;
