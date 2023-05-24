@@ -24,7 +24,6 @@ function StudentList() {
                     <td>{student.last}</td>
                 </tr>
             ))}
-
             </tbody>
         </Table>
     );
