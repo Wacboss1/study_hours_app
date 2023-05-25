@@ -11,7 +11,7 @@ export default function RunHours(){
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'file.xlsx'); // Set the desired file name
+                link.setAttribute('download', 'study_hours.xlsx'); // Set the desired file name
                 document.body.appendChild(link);
                 link.click();
                 link.parentNode.removeChild(link);
