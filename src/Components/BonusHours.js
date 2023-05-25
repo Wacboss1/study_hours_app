@@ -18,7 +18,7 @@ export default function BonusHours(){
         } else if (range.to) {
             footer = (
                 <p>
-                    {format(range.from, 'PPP')}–{format(range.to, 'PPP')}
+                    {format(range.from, 'PPP')} to {format(range.to, 'PPP')}
                 </p>
             );
         }
@@ -46,6 +46,7 @@ export default function BonusHours(){
                 onChange={handleMultChange}/>
             <p>Selected Dates: {footer}</p>
             <p>Multiplier: {multi}x</p>
+            {/*TODO add the bonus hours to the database*/}
             <Button>Add Hours</Button>
         </div>
     )
