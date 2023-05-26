@@ -6,9 +6,7 @@ import RunHours from "../Components/RunHours";
 
 
 function Main() {
-
     const [key, setKey] = useState("students");
-
 
     return (
         <div>

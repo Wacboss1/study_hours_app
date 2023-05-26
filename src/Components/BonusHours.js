@@ -62,7 +62,6 @@ export default function BonusHours(){
             <p>Multiplier: {multi}x</p>
             {/*TODO add the bonus hours to the database*/}
             <Button onClick={SendBonusHours}>Add Hours</Button>
-            {res}
         </div>
     )
 }
