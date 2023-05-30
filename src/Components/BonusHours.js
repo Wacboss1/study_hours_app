@@ -11,16 +11,12 @@ export default function BonusHours(){
         setMulti(event.target.value)
     }
 
-    let footer = <p>Please a start and end date</p>
+    let footer = "Please select a start and end date"
     if (range?.from) {
         if (!range.to) {
-            footer = <p>{format(range.from, 'PPP')}</p>;
+            footer = format(range.from, 'PPP');
         } else if (range.to) {
-            footer = (
-                <p>
-                    {format(range.from, 'PPP')} to {format(range.to, 'PPP')}
-                </p>
-            );
+            footer = format(range.from, 'PPP') + "to" + format(range.to, 'PPP');
         }
     }
 
@@ -31,7 +27,7 @@ export default function BonusHours(){
             "Multiplier": multi
         }
 
-        fetch("https://bcd2ad0b-8c06-4631-bf4c-349265062ded.mock.pstmn.io/AddBonusHours",
+        fetch(process.env.REACT_APP_BACKEND_URL + "/AddBonusHours",
             {
                 method: 'POST',
                 body: hoursToAdd

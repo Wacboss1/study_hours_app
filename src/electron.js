@@ -1,4 +1,5 @@
 const { app, BrowserWindow, Menu } = require('electron');
+require('dotenv').config();
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -8,6 +9,7 @@ function createWindow() {
       nodeIntegration: true
     }
   });
+
 
   Menu.setApplicationMenu(null);
   win.loadURL('http://localhost:3000');

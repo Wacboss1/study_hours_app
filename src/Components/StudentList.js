@@ -17,7 +17,7 @@ function StudentList() {
 
     const fetchdata = async () => {
         try{
-            const response = await fetch('https://bcd2ad0b-8c06-4631-bf4c-349265062ded.mock.pstmn.io/GetStudents');
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/GetStudents');
             const jsonData = await response.json();
             setStudents(jsonData)
             setLoading(false)
