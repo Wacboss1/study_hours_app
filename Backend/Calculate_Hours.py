@@ -2,6 +2,7 @@
 import time
 from datetime import timedelta
 import pandas as pd
+import sqlite3
 
 pd.options.mode.chained_assignment = None
 
@@ -26,6 +27,7 @@ def add_needed_columns(valid_hours, bonus_hours_list):
     calculate_bonus_hours(valid_hours, bonus_hours_list)
     return valid_hours
 
+
 def calculate_bonus_hours(valid_hours, bonus_hours):
     multipliers = valid_hours['Check In Date'].apply(lambda x: get_multiplier(x, bonus_hours))
     valid_hours['Minutes Gained'] = valid_hours['Minutes Gained'] * multipliers.apply(float)
@@ -47,17 +49,17 @@ def timedelta_to_minutes(x):
 
 
 def timedelta_to_hours(x):
-    #TODO give hours and minutes from total hours
+    # TODO give hours and minutes from total hours
     return round(x / timedelta(hours=1), 2)
 
 
-def calculate_study_hours():
+def calculate_study_hours(file, close_time, bonus_hours):
     global closing_time
     # TODO get data from database
-    closing_time = pd.to_datetime(input_data.start_time).time()
-    all_hours = get_all_hours(input_data.file_path)
+    closing_time = close_time
+    all_hours = get_all_hours(file)
     valid_hours = filter_valid_hours(all_hours)
-    valid_hours = add_needed_columns(valid_hours, input_data.bonus_hours)
+    valid_hours = add_needed_columns(valid_hours, bonus_hours)
     summary_page = pd.DataFrame(columns=['Last Name', 'First Name', 'Total Hours']);
     names = all_hours.drop_duplicates(subset=['First Name', 'Last Name'])[['First Name', 'Last Name']].values
     writer = pd.ExcelWriter("Study Hours " + time.strftime("%b %d %Y", time.localtime()) + ".xlsx", engine="openpyxl")

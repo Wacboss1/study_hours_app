@@ -5,7 +5,7 @@ import "../StyleSheets/FileUploadPage.css"
 export default function RunHours(){
 
     async function GetStudyHours() {
-        fetch('https://bcd2ad0b-8c06-4631-bf4c-349265062ded.mock.pstmn.io/RunHours')
+        fetch(process.env.REACT_APP_BACKEND_URL + "/RunHours")
             .then(response => response.blob()) // Get the response as a blob
             .then(blob => {
                 const url = window.URL.createObjectURL(blob);
