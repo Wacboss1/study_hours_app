@@ -62,7 +62,6 @@ def get_bonus_hours(conn):
     cursor = conn.execute(query)
     rows = cursor.fetchall()
 
-    # Convert the rows to a list of dictionaries
     data = []
     for row in rows:
         start_date, end_date, multiplier = row
@@ -71,7 +70,6 @@ def get_bonus_hours(conn):
             'end_date': end_date,
             'multiplier':  multiplier
         })
-
     return data
 
 
