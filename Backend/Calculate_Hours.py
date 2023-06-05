@@ -1,8 +1,8 @@
 # TODO document for use
 import time
 from datetime import timedelta
+
 import pandas as pd
-import sqlite3
 
 pd.options.mode.chained_assignment = None
 
@@ -58,7 +58,6 @@ def timedelta_to_hours(x):
 
 def calculate_study_hours(filepath, close_time, bonus_hours):
     global closing_time
-    # TODO get data from database
     closing_time = close_time
     all_hours = get_all_hours(filepath)
     valid_hours = filter_valid_hours(all_hours)

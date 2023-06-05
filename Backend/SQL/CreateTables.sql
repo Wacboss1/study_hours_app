@@ -1,9 +1,17 @@
 CREATE TABLE IF NOT EXISTS Students(
-    Sid INTEGER PRIMARY KEY,
-    'First Name' TEXT,
-     'Last Name' TEXT,
-     'Hours' INTEGER
+                                       Sid
+                                       INTEGER
+                                       PRIMARY
+                                       KEY
+                                       AUTOINCREMENT,
+                                       'First Name'
+                                       TEXT,
+                                       'Last Name'
+                                       TEXT,
+                                       Hours
+                                       INTEGER
 );
+
 CREATE TABLE IF NOT EXISTS BonusHours (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     start_date DATE NOT NULL,

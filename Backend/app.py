@@ -1,11 +1,26 @@
 import json
-
-from flask import Flask, request, send_file
 import sqlite3
-import os
+
+import pandas as pd
+from flask import Flask, request, send_file
+
 from Calculate_Hours import calculate_study_hours
 
 app = Flask(__name__)
+
+
+def initialize_values():
+    connect_to_db()
+    try:
+        with open("Config.json", 'r') as config_file:
+            return
+    except FileNotFoundError:
+        with open("Config.json", 'w') as config_file:
+            config_json = {
+                "close time": "23:59:00",
+                "filepath": None
+            }
+            json.dump(config_json, config_file)
 
 
 def connect_to_db():
@@ -17,9 +32,39 @@ def connect_to_db():
     return conn
 
 
-@app.route("/GetStudents")
+with app.app_context():
+    initialize_values()
+
+
+@app.route("/GetStudents", methods=["GET"])
 def get_students():
-    return None
+    conn = connect_to_db()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT `First Name`, `Last Name`, Hours
+        FROM Students
+        ORDER BY `Last Name`
+    """)
+    results = cursor.fetchall()
+    return results
+
+
+@app.route("/SetCloseTime", methods=["POST"])
+def set_close_time():
+    config_json = get_config()
+    config_json['close time'] = request.get_json()['close time']
+    save_config(config_json)
+    return {"status": 200}
+
+
+def get_config():
+    with open("Config.json", "r") as config_file:
+        return json.load(config_file)
+
+
+def save_config(data):
+    with open("Config.json", "w") as config_file:
+        json.dump(data, config_file)
 
 
 @app.route("/AddBonusHours", methods=["POST"])
@@ -34,7 +79,7 @@ def add_bonus_hours():
     connection.execute(query, (request_json['startdate'], request_json['enddate'], request_json['multi']))
     connection.commit()
     connection.close()
-    return {"out": 200}
+    return {"status": 200}
 
 
 @app.route("/RunHours", methods=['POST'])
@@ -46,10 +91,11 @@ def run_hours():
     if file.filename == '':
         return 'No file selected'
     file.save(file.filename)
-    # TODO get closing time from database
+    close_time = get_config()["close time"]
     bonus_hours = get_bonus_hours(connection)
-    out_filepath = calculate_study_hours(file.filename, "23:59:00", bonus_hours)
-    # TODO add students from outfile to the database
+    out_filepath = calculate_study_hours(file.filename, close_time, bonus_hours)
+    add_students_to_database(connection)
+    set_filepath(out_filepath)
     connection.close()
     return send_file(out_filepath, as_attachment=True)
 
@@ -68,9 +114,34 @@ def get_bonus_hours(conn):
         data.append({
             'start_date': start_date,
             'end_date': end_date,
-            'multiplier':  multiplier
+            'multiplier': multiplier
         })
     return data
+
+
+def set_filepath(filepath):
+    config_json = get_config()
+    config_json['filepath'] = filepath
+    save_config(config_json)
+
+
+def add_students_to_database(con):
+    cursor = con.cursor()
+    filepath = get_config()['filepath']
+    students_df = pd.read_excel(filepath)
+    student_list = students_df.to_dict('records')
+    for student in student_list:
+        first_name = student['First Name']
+        last_name = student["Last Name"]
+        cursor.execute("SELECT COUNT(*) FROM Students WHERE `First Name`=? AND `Last Name`=?", (first_name, last_name))
+        result = cursor.fetchone()
+        count = result[0]
+        if count == 0:
+            cursor.execute("""
+                INSERT INTO Students ("First Name", "Last Name", Hours) VALUES (?, ?, ?)
+            """, (student["First Name"], student["Last Name"], student["Total Hours"]))
+    con.commit()
+    return
 
 
 if __name__ == '__main__':
