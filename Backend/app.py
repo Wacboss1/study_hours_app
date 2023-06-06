@@ -3,11 +3,12 @@ import sqlite3
 
 import pandas as pd
 from flask import Flask, request, send_file
+from flask_cors import CORS
 
 from Calculate_Hours import calculate_study_hours
 
 app = Flask(__name__)
-
+CORS(app)
 
 def initialize_values():
     connect_to_db()
@@ -26,7 +27,7 @@ def initialize_values():
 def connect_to_db():
     conn = sqlite3.connect("SBHours.db")
     cursor = conn.cursor()
-    with open('SQL/CreateTables.sql', 'r') as table_script:
+    with open('Backend/SQL/CreateTables.sql', 'r') as table_script:
         cursor.executescript(table_script.read())
         conn.commit()
     return conn
@@ -45,7 +46,9 @@ def get_students():
         FROM Students
         ORDER BY `Last Name`
     """)
-    results = cursor.fetchall()
+    columns = [column[0] for column in cursor.description]
+    rows = cursor.fetchall()
+    results = [dict(zip(columns, row)) for row in rows]
     return results
 
 
@@ -94,8 +97,8 @@ def run_hours():
     close_time = get_config()["close time"]
     bonus_hours = get_bonus_hours(connection)
     out_filepath = calculate_study_hours(file.filename, close_time, bonus_hours)
-    add_students_to_database(connection)
     set_filepath(out_filepath)
+    add_students_to_database(connection)
     connection.close()
     return send_file(out_filepath, as_attachment=True)
 
