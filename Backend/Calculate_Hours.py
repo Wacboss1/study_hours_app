@@ -8,7 +8,8 @@ pd.options.mode.chained_assignment = None
 
 
 def get_all_hours(doc):
-    full_hours = pd.read_excel(doc)
+    full_hours = pd.read_excel(doc, engine='openpyxl')
+    print(full_hours.dtypes)
     full_hours = full_hours.sort_values(by=["Last Name", "First Name"])
     return full_hours
 
@@ -79,13 +80,3 @@ def calculate_study_hours(filepath, close_time, bonus_hours):
     summary_page.to_excel(writer, sheet_name=time.strftime("%b %d %Y", time.localtime()), index=False)
     writer.close()
     return "Study Hours " + time.strftime("%b %d %Y", time.localtime()) + ".xlsx"
-
-
-""" 
-get rid of all entries with hours after the closing time
-for each person calculate the total hours they been clocked in
-create and xlsx of that list
-    First Name, Last Name, Total Hours
-"""
-
-# hours worked: 26 + 1

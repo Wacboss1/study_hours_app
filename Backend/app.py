@@ -131,7 +131,7 @@ def set_filepath(filepath):
 def add_students_to_database(con):
     cursor = con.cursor()
     filepath = get_config()['filepath']
-    students_df = pd.read_excel(filepath)
+    students_df = pd.read_excel(filepath, engine='openpyxl')
     student_list = students_df.to_dict('records')
     for student in student_list:
         first_name = student['First Name']
