@@ -9,7 +9,6 @@ pd.options.mode.chained_assignment = None
 
 def get_all_hours(doc):
     full_hours = pd.read_excel(doc, engine='openpyxl')
-    print(full_hours.dtypes)
     full_hours = full_hours.sort_values(by=["Last Name", "First Name"])
     return full_hours
 
@@ -23,7 +22,7 @@ def filter_valid_hours(full_hours):
 
 def add_needed_columns(valid_hours, bonus_hours_list):
     # TODO format the weeks to start from week 1
-    valid_hours["Week"] = valid_hours["Check In Time"].dt.isocalendar().week
+    valid_hours["Week"] = valid_hours["Check In Time"].dt.week
     valid_hours["Minutes Gained"] = valid_hours["Check Out Time"] - valid_hours["Check In Time"]
     calculate_bonus_hours(valid_hours, bonus_hours_list)
     return valid_hours
@@ -57,7 +56,7 @@ def timedelta_to_hours(x):
     return round(x / timedelta(hours=1), 2)
 
 
-def calculate_study_hours(filepath, close_time, bonus_hours):
+def calculate_study_hours(filepath, out_path, close_time, bonus_hours):
     global closing_time
     closing_time = close_time
     all_hours = get_all_hours(filepath)
@@ -65,7 +64,7 @@ def calculate_study_hours(filepath, close_time, bonus_hours):
     valid_hours = add_needed_columns(valid_hours, bonus_hours)
     summary_page = pd.DataFrame(columns=['Last Name', 'First Name', 'Total Hours'])
     names = all_hours.drop_duplicates(subset=['First Name', 'Last Name'])[['First Name', 'Last Name']].values
-    writer = pd.ExcelWriter("Study Hours " + time.strftime("%b %d %Y", time.localtime()) + ".xlsx", engine="openpyxl")
+    writer = pd.ExcelWriter(out_path + "Study Hours " + time.strftime("%b %d %Y", time.localtime()) + ".xlsx", engine="openpyxl")
     summary_page.to_excel(writer, sheet_name=time.strftime("%b %d %Y", time.localtime()), index=False)
     for person in names:
         person_hours = valid_hours[(valid_hours['First Name'] == person[0]) & (valid_hours['Last Name'] == person[1])]

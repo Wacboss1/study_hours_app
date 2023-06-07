@@ -9,25 +9,26 @@ export default function RunHours(){
         const formdata = new FormData();
         formdata.append("File", file)
 
+        // TODO turn button into a spinner while waiting to recieve file
         fetch(process.env.REACT_APP_BACKEND_URL + "/RunHours",
             {
                 method: "POST",
                 body: formdata
-            });
-            // .then(response => response.blob()) // Get the response as a blob
-            // .then(blob => {
-            //     const url = window.URL.createObjectURL(blob);
-            //     const link = document.createElement('a');
-            //     link.href = url;
-            //     link.setAttribute('download', 'study_hours.xlsx'); // Set the desired file name
-            //     document.body.appendChild(link);
-            //     link.click();
-            //     link.parentNode.removeChild(link);
-            // })
-            // .catch(error => {
-            //     console.error('Error downloading file:', error);
-            // }
-        // );
+            })
+            .then(response => response.blob()) // Get the response as a blob
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'study_hours.xlsx'); // Set the desired file name
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            })
+            .catch(error => {
+                console.error('Error downloading file:', error);
+            }
+        );
     }
 
     return(

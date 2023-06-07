@@ -22,7 +22,7 @@ function createWindow() {
 app.whenReady().then(() => {
   createWindow();
   // Spawn the Flask server as a child process
-  flaskServer = spawn('python', [join(__dirname, '../Backend/app.py')]);
+  flaskServer = spawn('python', [join(__dirname, 'Backend/app.py')]);
 
   // Print the Flask server output to the console
   flaskServer.stdout.on('data', (data) => {

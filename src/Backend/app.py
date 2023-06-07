@@ -1,5 +1,6 @@
 import json
 import sqlite3
+import os
 
 import pandas as pd
 from flask import Flask, request, send_file
@@ -9,14 +10,18 @@ from Calculate_Hours import calculate_study_hours
 
 app = Flask(__name__)
 CORS(app)
+# Change to src/Backend/
+backend_path = "src/Backend/"
+config_file_path = backend_path + "Config.json"
+
 
 def initialize_values():
     connect_to_db()
     try:
-        with open("Config.json", 'r') as config_file:
+        with open(config_file_path, 'r') as config_file:
             return
     except FileNotFoundError:
-        with open("Config.json", 'w') as config_file:
+        with open(config_file, 'w') as config_file:
             config_json = {
                 "close time": "23:59:00",
                 "filepath": None
@@ -25,9 +30,10 @@ def initialize_values():
 
 
 def connect_to_db():
-    conn = sqlite3.connect("SBHours.db")
+    conn = sqlite3.connect(backend_path + "SBHours.db")
     cursor = conn.cursor()
-    with open('Backend/SQL/CreateTables.sql', 'r') as table_script:
+    # Change to Backend/SQL/CreateTables.sql when running from Electron
+    with open(backend_path + 'SQL/CreateTables.sql', 'r') as table_script:
         cursor.executescript(table_script.read())
         conn.commit()
     return conn
@@ -61,12 +67,12 @@ def set_close_time():
 
 
 def get_config():
-    with open("Config.json", "r") as config_file:
+    with open(config_file_path, "r") as config_file:
         return json.load(config_file)
 
 
 def save_config(data):
-    with open("Config.json", "w") as config_file:
+    with open(config_file_path, "w") as config_file:
         json.dump(data, config_file)
 
 
@@ -93,14 +99,16 @@ def run_hours():
     file = request.files['File']
     if file.filename == '':
         return 'No file selected'
-    file.save(file.filename)
+    filepath = backend_path + file.filename
+    file.save(filepath)
     close_time = get_config()["close time"]
     bonus_hours = get_bonus_hours(connection)
-    out_filepath = calculate_study_hours(file.filename, close_time, bonus_hours)
-    set_filepath(out_filepath)
+    out_filepath = calculate_study_hours(filepath, backend_path, close_time, bonus_hours)
+    set_filepath(backend_path + out_filepath)
     add_students_to_database(connection)
     connection.close()
-    return send_file(out_filepath, as_attachment=True)
+    os.remove(backend_path + file.filename)
+    return send_file(out_filepath, as_attachment=True, download_name=out_filepath)
 
 
 def get_bonus_hours(conn):
@@ -136,13 +144,20 @@ def add_students_to_database(con):
     for student in student_list:
         first_name = student['First Name']
         last_name = student["Last Name"]
+        hours = student["Total Hours"]
         cursor.execute("SELECT COUNT(*) FROM Students WHERE `First Name`=? AND `Last Name`=?", (first_name, last_name))
         result = cursor.fetchone()
         count = result[0]
         if count == 0:
             cursor.execute("""
                 INSERT INTO Students ("First Name", "Last Name", Hours) VALUES (?, ?, ?)
-            """, (student["First Name"], student["Last Name"], student["Total Hours"]))
+            """, (first_name, last_name, hours))
+        if count > 0:
+            cursor.execute("""
+                UPDATE Students
+                SET Hours = ?
+                WHERE `First Name` = ? AND `Last Name` = ?
+            """, (hours, first_name, last_name))
     con.commit()
     return
 
