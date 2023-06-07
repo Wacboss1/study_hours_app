@@ -36,13 +36,22 @@ export default function BonusHours(){
                 }
             })
             .then(response => setResponse(response.status))
-    //     TODO create everything after click
+            .then(() => clearFields())
     }
+
+    const clearFields = () => {
+        setRange(null)
+        setMulti(null)
+        const multiForm = document.getElementById("multi")
+        multiForm.value = "";
+    }
+
     return(
         <div className={"text-center"}>
             <Container className={"centered-container"}>
                 <Row>
                     <Col className={"d-flex justify-content-center"}>
+                        {/*TODO be able to tell which dates already have bonuses*/}
                         <DayPicker
                             mode ="range"
                             selected={range}
@@ -60,7 +69,6 @@ export default function BonusHours(){
                 onChange={handleMultiChange}/>
             <p>Selected Dates:<br/>{footer}</p>
             <p>Multiplier: {multi}x</p>
-            {/*TODO add the bonus hours to the database*/}
             <Button onClick={SendBonusHours}>Add Hours</Button>
         </div>
     )

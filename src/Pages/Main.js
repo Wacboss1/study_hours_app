@@ -25,7 +25,11 @@ function Main() {
                     <RunHours/>
                 </Tab>
                 <Tabs eventKey={"Settings"} title={"Settings"}>
-
+                {/*TODO Section to
+                    Change starting day
+                    Change closing time
+                    Clear the database
+                */}
                 </Tabs>
             </Tabs>
         </div>
