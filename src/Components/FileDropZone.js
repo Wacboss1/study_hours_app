@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import "../StyleSheets/Dropzone.css"
 
 export default function FileDropZone(props){
 
@@ -31,7 +32,19 @@ export default function FileDropZone(props){
             onDrop={handleDrop}
         >
             {props.selectedFile ? (
-                <p>Selected File: {props.selectedFile.name}</p>
+                    <div>
+                        <input
+                            type="file"
+                            id="fileInput"
+                            className="form-control-file"
+                            onChange={handleFileChange}
+                            hidden={true}
+                        />
+                        <label htmlFor="fileInput" className="form-label drop-label">
+                            <p>Selected File: {props.selectedFile.name}</p>
+                        </label>
+                    </div>
+
             ) : (
                 <div>
                     <input
@@ -41,7 +54,7 @@ export default function FileDropZone(props){
                         onChange={handleFileChange}
                         hidden={true}
                     />
-                    <label htmlFor="fileInput" className="form-label">
+                    <label htmlFor="fileInput" className="form-label drop-label">
                         Drag and drop file here, or click to select
                     </label>
                 </div>

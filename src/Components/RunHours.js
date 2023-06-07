@@ -1,16 +1,19 @@
-import {Button} from "react-bootstrap";
+import {Button, Spinner} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import FileDropZone from "./FileDropZone";
-import "../StyleSheets/FileUploadPage.css"
+
 export default function RunHours(){
     const [file, setFile] = useState(null)
+    const [isLoading, setisLoading] = useState(false)
 
     async function GetStudyHours() {
+        setisLoading(true)
         const formdata = new FormData();
         formdata.append("File", file)
 
-        // TODO turn button into a spinner while waiting to recieve file
-        fetch(process.env.REACT_APP_BACKEND_URL + "/RunHours",
+
+
+        await fetch(process.env.REACT_APP_BACKEND_URL + "/RunHours",
             {
                 method: "POST",
                 body: formdata
@@ -28,17 +31,21 @@ export default function RunHours(){
             .catch(error => {
                 console.error('Error downloading file:', error);
             }
-        );
+        ).then(() => setisLoading(false));
+
     }
 
     return(
         <div className={"text-center"}>
-            {/*TODO make this a box*/}
-            <FileDropZone className={"text-center"} setSelectedFile={setFile}/>
-            {/*TODO when pressed, get updated study hours*/}
-            <Button onClick={GetStudyHours}
-                className={"justify-content-center"}
-            >Run Study Hours</Button>
+            <FileDropZone className={"text-center"} selectedFile={file} setSelectedFile={setFile}/>
+            {isLoading ? (
+                <Spinner
+                    className={"justify-content-center"}
+                    variant="primary"/>
+            ) : (
+                <Button onClick={GetStudyHours}
+                        className={"justify-content-center"}>Run Study Hours</Button>
+            )}
         </div>
     )
 }
