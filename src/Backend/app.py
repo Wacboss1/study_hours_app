@@ -1,6 +1,7 @@
 import json
 import sqlite3
 import os
+import sys
 
 import pandas as pd
 from flask import Flask, request, send_file
@@ -10,8 +11,13 @@ from Calculate_Hours import calculate_study_hours
 
 app = Flask(__name__)
 CORS(app)
-# Change to src/Backend/
-backend_path = "src/Backend/"
+
+if getattr(sys, 'frozen', False):
+    backend_path = os.path.dirname(sys.executable)
+else:
+    backend_path = os.path.dirname(os.path.abspath(__file__))
+
+backend_path = backend_path + "\\"
 config_file_path = backend_path + "Config.json"
 
 
@@ -21,7 +27,7 @@ def initialize_values():
         with open(config_file_path, 'r') as config_file:
             return
     except FileNotFoundError:
-        with open(config_file, 'w') as config_file:
+        with open(config_file_path, 'w') as config_file:
             config_json = {
                 "close time": "23:59:00",
                 "filepath": None
