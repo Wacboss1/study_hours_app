@@ -1,6 +1,7 @@
-const { app, BrowserWindow, Menu } = require('electron');
-const {spawn} = require("child_process")
+const { app, BrowserWindow} = require('electron');
+const {execFile} = require("child_process")
 const {join} = require("path");
+const isDev = require('electron-is-dev');
 require('dotenv').config();
 
 let flaskServer;
@@ -14,15 +15,32 @@ function createWindow() {
     }
   });
 
+  win.loadURL(
+      isDev
+          ? 'http://localhost:3000'
+          : `file://${join(__dirname, '../build/index.html')}`
+  );
 
-  Menu.setApplicationMenu(null);
-  win.loadURL('http://localhost:3000');
+  if (isDev) {
+    win.webContents.openDevTools({ mode: 'detach' });
+  }
 }
+
+if (require('electron-squirrel-startup')) app.quit();
 
 app.whenReady().then(() => {
   createWindow();
-  // Spawn the Flask server as a child process
-  flaskServer = spawn('python', [join(__dirname, 'Backend/app.py')]);
+  let backend_exe = isDev
+    ? 'src/Backend/dist/backend/backend.exe'
+    : join(process.resourcesPath, "backend/backend.exe")
+  console.log("Looking for backend in " + backend_exe)
+  flaskServer = execFile(backend_exe, (error, stdout) => {
+    if (error) {
+      console.error(`Error executing the executable: ${error.message}`);
+      return;
+    }
+    console.log(`Executable output:\n${stdout}`);
+  });
 
   // Print the Flask server output to the console
   flaskServer.stdout.on('data', (data) => {

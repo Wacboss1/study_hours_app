@@ -2,6 +2,8 @@
   "name": "study_hours_app",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:5000",
+  "homepage": "./",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -12,6 +14,8 @@
     "cross-env": "^7.0.3",
     "date-fns": "^2.30.0",
     "dotenv": "^16.1.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-day-picker": "^8.7.1",
@@ -21,12 +25,47 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start-forge": "electron-forge start",
+    "start-react": "react-scripts start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\" ",
-    "electron": "wait-on http://127.0.0.1:3000 && electron ."
+    "dev": "concurrently -k \"cross-env BROWSER=none npm run start-react\" \"npm:electron\" ",
+    "electron": "wait-on http://127.0.0.1:3000 && electron .",
+    "electron-dev": "set ELECTRON_START_URL='http://localhost:3000' && npm run dev"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "extraResource": [
+          "src/Backend/dist/backend"
+        ]
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "electron_quick_start"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ]
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +88,11 @@
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "src/electron.js",
   "devDependencies": {
+    "@electron-forge/cli": "^6.1.1",
+    "@electron-forge/maker-deb": "^6.1.1",
+    "@electron-forge/maker-rpm": "^6.1.1",
+    "@electron-forge/maker-squirrel": "^6.1.1",
+    "@electron-forge/maker-zip": "^6.1.1",
     "concurrently": "^8.0.1",
     "electron": "^24.3.0",
     "wait-on": "^7.0.1"
