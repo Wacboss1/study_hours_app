@@ -36,37 +36,6 @@
     "electron": "wait-on http://127.0.0.1:3000 && electron .",
     "electron-dev": "set ELECTRON_START_URL='http://localhost:3000' && npm run dev"
   },
-  "config": {
-    "forge": {
-      "packagerConfig": {
-        "extraResource": [
-          "src/Backend/dist/backend"
-        ]
-      },
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "electron_quick_start"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ]
-    }
-  },
   "eslintConfig": {
     "extends": [
       "react-app",
