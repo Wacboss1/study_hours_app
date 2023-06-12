@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import StudentList from "../Components/StudentList";
-import {Tab, Tabs} from "react-bootstrap";
+import {Button, Tab, Tabs} from "react-bootstrap";
 import BonusHours from "../Components/BonusHours";
 import RunHours from "../Components/RunHours";
+import Settings from "../Components/Settings";
 
 
 function Main() {
@@ -30,6 +31,7 @@ function Main() {
                     Change closing time
                     Clear the database
                 */}
+                    <Settings/>
                 </Tabs>
             </Tabs>
         </div>
