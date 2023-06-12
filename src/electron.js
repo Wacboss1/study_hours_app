@@ -1,7 +1,7 @@
 const { app, BrowserWindow} = require('electron');
-const {execFile} = require("child_process")
 const {join} = require("path");
 const isDev = require('electron-is-dev');
+const {child_process} = require('child_process')
 require('dotenv').config();
 
 let flaskServer;
@@ -34,7 +34,7 @@ app.whenReady().then(() => {
     ? 'src/Backend/dist/backend/backend.exe'
     : join(process.resourcesPath, "backend/backend.exe")
   console.log("Looking for backend in " + backend_exe)
-  flaskServer = execFile(backend_exe, (error, stdout) => {
+  flaskServer = child_process.execFile(backend_exe, (error, stdout) => {
     if (error) {
       console.error(`Error executing the executable: ${error.message}`);
       return;
