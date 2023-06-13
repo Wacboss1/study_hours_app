@@ -6,10 +6,10 @@ function StudentList() {
     const [isLoading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetchdata();
+        GetListOfStudents();
     }, []);
 
-    const fetchdata = async () => {
+    const GetListOfStudents = async () => {
         try{
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + '/GetStudents', {
                 method: 'GET'

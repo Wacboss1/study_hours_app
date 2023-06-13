@@ -1,11 +1,21 @@
 import {Button, Col, Form, Modal, Row} from "react-bootstrap";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import {TimePicker} from "@mui/x-date-pickers";
 import {DayPicker} from "react-day-picker";
 import 'react-day-picker/dist/style.css';
 export default function Settings(){
+    const [startDate, setStartDate] = useState(null)
+    const [closingTime, setClosingTime] = useState(null)
+    async function GetStartingValues() {
+        console.log("Getting values")
+    }
+
+    useEffect(() => {
+        GetStartingValues()
+    })
+
     return(
         <div className={"text-center"}>
             <Row>
@@ -16,6 +26,8 @@ export default function Settings(){
                         </div>
                         <DayPicker
                             mode ="single"
+                            selected={startDate}
+                            onSelect={setStartDate}
                             className={"display-center justify-content-center align-items-center"}
                         />
                     </div>
@@ -27,17 +39,22 @@ export default function Settings(){
                         <Form.Label>Closing Time</Form.Label>
                     </div>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimePicker></TimePicker>
+                        <TimePicker
+                            value={closingTime}
+                            onChange={(newVal) =>
+                            {
+                                setClosingTime(newVal)
+                                console.log(newVal)
+                            }}
+                        />
                     </LocalizationProvider>
                 </div>
             </Row>
-            <Row>
+            <Row className={"mt-3"}>
                 <div>
                     <Button variant={"primary"}>Save Settings</Button>
                 </div>
-            </Row>
-            <Row >
-                <div>
+                <div className={"mt-1"}>
                     <Button variant={"danger"}>Clear Data</Button>
                 </div>
             </Row>
