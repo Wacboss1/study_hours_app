@@ -5,7 +5,7 @@ import {format} from "date-fns";
 import 'react-day-picker/dist/style.css';
 export default function BonusHours(){
     const [range, setRange] = useState(null);
-    const [multi, setMulti] = useState(null);
+    const [multi, setMulti] = useState(0);
     const [res, setResponse] = useState(null);
     const handleMultiChange = (event) => {
         setMulti(event.target.value)
@@ -22,8 +22,8 @@ export default function BonusHours(){
 
     const SendBonusHours = () => {
         let hoursToAdd = {
-            "startdate": format(range.from, 'MM/dd/yyyy'),
-            "enddate": format(range.to, 'MM/dd/yyyy'),
+            "startDate": format(range.from, 'MM/dd/yyyy'),
+            "endDate": format(range.to, 'MM/dd/yyyy'),
             "multi": multi
         }
 
@@ -66,7 +66,9 @@ export default function BonusHours(){
             <Form.Control
                 type="number"
                 id="multi"
-                onChange={handleMultiChange}/>
+                onChange={handleMultiChange}
+                className={'m-20'}
+            />
             <p>Selected Dates:<br/>{footer}</p>
             <p>Multiplier: {multi}x</p>
             <Button onClick={SendBonusHours}>Add Hours</Button>

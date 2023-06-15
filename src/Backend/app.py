@@ -91,7 +91,7 @@ def add_bonus_hours():
     INSERT INTO BonusHours (start_date, end_date, multiplier)
     VALUES (?, ?, ?)
     """
-    connection.execute(query, (request_json['startdate'], request_json['enddate'], request_json['multi']))
+    connection.execute(query, (request_json['startDate'], request_json['endDate'], request_json['multi']))
     connection.commit()
     connection.close()
     return {"status": 200}

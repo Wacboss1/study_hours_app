@@ -22,6 +22,7 @@ function StudentList() {
         }
     }
 
+    // TODO make the spinner disappear if not data is in the server
     if(isLoading){
         return <Container fluid className={"justify-content-center align-items-center d-flex"}>
             <Row className={"h-100"}>

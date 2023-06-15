@@ -5,16 +5,39 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import {TimePicker} from "@mui/x-date-pickers";
 import {DayPicker} from "react-day-picker";
 import 'react-day-picker/dist/style.css';
+import {format} from "date-fns";
 export default function Settings(){
     const [startDate, setStartDate] = useState(null)
     const [closingTime, setClosingTime] = useState(null)
-    async function GetStartingValues() {
-        console.log("Getting values")
-    }
+    const [showingModal, setShowModal] = useState(false)
 
     useEffect(() => {
-        GetStartingValues()
+        GetCurrentValues()
     })
+
+    let GetCurrentValues = async () => {
+        try{
+            let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/GetSettings",
+                {
+                    method: 'GET'
+                })
+            let bodyJson = response.json()
+            setStartDate(new Date(bodyJson['startDate']))
+            console.log(startDate)
+                // setClosingTime(bodyJson['closeTime'])
+        } catch (error){
+            console.log(error)
+        }
+    }
+
+    let SaveSetting = async () => {
+        console.log("Saving Settings")
+    }
+
+    let ClearData = async () => {
+        console.log("Clearing Data")
+        setShowModal(false)
+    }
 
     return(
         <div className={"text-center"}>
@@ -27,7 +50,12 @@ export default function Settings(){
                         <DayPicker
                             mode ="single"
                             selected={startDate}
-                            onSelect={setStartDate}
+                            onSelect={(newVal) => {
+                                setStartDate(newVal)
+                                console.log(newVal)
+                            }}
+                            // modifiers={currentStartDate}
+                            // modifiersStyles={{ booked: bookedStyle }}
                             className={"display-center justify-content-center align-items-center"}
                         />
                     </div>
@@ -52,15 +80,15 @@ export default function Settings(){
             </Row>
             <Row className={"mt-3"}>
                 <div>
-                    <Button variant={"primary"}>Save Settings</Button>
+                    <Button variant={"primary"} onClick={SaveSetting}>Save Settings</Button>
                 </div>
                 <div className={"mt-1"}>
-                    <Button variant={"danger"}>Clear Data</Button>
+                    <Button variant={"danger"} onClick={() => setShowModal(true)}>Clear Data</Button>
                 </div>
             </Row>
-            <Modal>
+            <Modal show={showingModal}>
                 Testing
-                <Button variant={"danger"}>Confirm</Button>
+                <Button variant={"danger"} onClick={ClearData}>Confirm</Button>
             </Modal>
         </div>
     )
