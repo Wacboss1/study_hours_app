@@ -23,3 +23,12 @@ yarn-debug.log*
 yarn-error.log*
 
 /.idea/
+.env
+src/Backend/.idea/
+src/Backend/__pycache__/
+src/Backend/build/
+src/Backend/dist/
+src/Backend/SBHours.db
+src/Backend/Config.json
+out/
+.vscode/

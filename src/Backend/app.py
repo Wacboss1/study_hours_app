@@ -30,7 +30,8 @@ def initialize_values():
         with open(config_file_path, 'w') as config_file:
             config_json = {
                 "close time": "23:59:00",
-                "filepath": None
+                "filepath": None,
+                "start date": None
             }
             json.dump(config_json, config_file)
 
@@ -135,7 +136,6 @@ def get_bonus_hours(conn):
         })
     return data
 
-
 def set_filepath(filepath):
     config_json = get_config()
     config_json['filepath'] = filepath
@@ -167,6 +167,19 @@ def add_students_to_database(con):
     con.commit()
     return
 
+@app.route("/GetSettings", methods=["GET"])
+def get_settings():
+    return get_config()
+
+# TODO save settings to config file
+@app.route("/SaveSettings", methods=["POST"])
+def save_settings():
+    config_json = get_config()
+    response_json = request.get_json()
+    config_json["start date"] = response_json["startDate"]
+    config_json["close time"] = response_json["closingTime"]
+    save_config(config_json)
+    return {"out": 200}
 
 if __name__ == '__main__':
     app.run()

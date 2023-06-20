@@ -6,35 +6,48 @@ import {TimePicker} from "@mui/x-date-pickers";
 import {DayPicker} from "react-day-picker";
 import 'react-day-picker/dist/style.css';
 import {format} from "date-fns";
+import dayjs from "dayjs";
 export default function Settings(){
     const [startDate, setStartDate] = useState(null)
     const [closingTime, setClosingTime] = useState(null)
     const [showingModal, setShowModal] = useState(false)
-
+    
     useEffect(() => {
         GetCurrentValues()
-    })
+    }, [])
 
     let GetCurrentValues = async () => {
         try{
-            let response = await fetch(process.env.REACT_APP_BACKEND_URL + "/GetSettings",
+            const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/GetSettings",
                 {
                     method: 'GET'
                 })
             let bodyJson = response.json()
-            setStartDate(new Date(bodyJson['startDate']))
+            setStartDate(new Date(bodyJson['start date']))
             console.log(startDate)
-                // setClosingTime(bodyJson['closeTime'])
+            // setClosingTime(bodyJson['closeTime'])
         } catch (error){
             console.log(error)
         }
     }
 
     let SaveSetting = async () => {
+        let currentSettings = {
+            "startDate": startDate,
+            "closingTime": closingTime
+        }
+        await fetch(process.env.REACT_APP_BACKEND_URL + "/SaveSettings", {
+            method: "POST",
+            body: JSON.stringify(currentSettings)
+        })
+            .then()
         console.log("Saving Settings")
     }
 
     let ClearData = async () => {
+        await fetch(process.env.REACT_APP_BACKEND_URL + "/ClearData", {
+            method: "POST"
+        })
         console.log("Clearing Data")
         setShowModal(false)
     }
@@ -69,12 +82,15 @@ export default function Settings(){
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimePicker
                             value={closingTime}
+                            views={['hours', 'minutes']}
+                            format={"hh:mm"}
                             onChange={(newVal) =>
                             {
                                 setClosingTime(newVal)
                                 console.log(newVal)
                             }}
                         />
+                        {/* TODO use .$H and .$m to get the time to the database */}
                     </LocalizationProvider>
                 </div>
             </Row>
@@ -86,6 +102,7 @@ export default function Settings(){
                     <Button variant={"danger"} onClick={() => setShowModal(true)}>Clear Data</Button>
                 </div>
             </Row>
+            {/*TODO make is so you don't have to reload to leave modal*/}
             <Modal show={showingModal}>
                 Testing
                 <Button variant={"danger"} onClick={ClearData}>Confirm</Button>

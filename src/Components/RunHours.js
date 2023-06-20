@@ -2,7 +2,7 @@ import {Button, Spinner} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import FileDropZone from "./FileDropZone";
 
-export default function RunHours(){
+export default function RunHours() {
     const [file, setFile] = useState(null)
     const [isLoading, setisLoading] = useState(false)
 
@@ -10,8 +10,6 @@ export default function RunHours(){
         setisLoading(true)
         const formdata = new FormData();
         formdata.append("File", file)
-
-
 
         await fetch(process.env.REACT_APP_BACKEND_URL + "/RunHours",
             {
@@ -29,13 +27,13 @@ export default function RunHours(){
                 link.parentNode.removeChild(link);
             })
             .catch(error => {
-                console.error('Error downloading file:', error);
-            }
-        ).then(() => setisLoading(false));
+                    console.error('Error downloading file:', error);
+                }
+            ).then(() => setisLoading(false));
 
     }
 
-    return(
+    return (
         <div className={"text-center"}>
             <FileDropZone className={"text-center"} selectedFile={file} setSelectedFile={setFile}/>
             {isLoading ? (
