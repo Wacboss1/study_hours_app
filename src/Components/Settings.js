@@ -7,6 +7,7 @@ import {DayPicker} from "react-day-picker";
 import 'react-day-picker/dist/style.css';
 import {format} from "date-fns";
 import dayjs from "dayjs";
+
 export default function Settings(){
     const [startDate, setStartDate] = useState(null)
     const [closingTime, setClosingTime] = useState(null)
@@ -22,10 +23,10 @@ export default function Settings(){
                 {
                     method: 'GET'
                 })
-            let bodyJson = response.json()
-            setStartDate(new Date(bodyJson['start date']))
-            console.log(startDate)
-            // setClosingTime(bodyJson['closeTime'])
+                let bodyJson = await response.json()
+                setStartDate(new Date(bodyJson['start date']))
+                console.log(startDate)
+            // setClosingTime(bodyJson['close time'])
         } catch (error){
             console.log(error)
         }
@@ -34,11 +35,14 @@ export default function Settings(){
     let SaveSetting = async () => {
         let currentSettings = {
             "startDate": startDate,
-            "closingTime": closingTime
+            "closingTime": `${closingTime.$H}:${closingTime.$m}`
         }
         await fetch(process.env.REACT_APP_BACKEND_URL + "/SaveSettings", {
             method: "POST",
-            body: JSON.stringify(currentSettings)
+            body: JSON.stringify(currentSettings),
+            headers: {
+                'Content-Type': 'application/json'
+            }
         })
             .then()
         console.log("Saving Settings")
@@ -67,6 +71,7 @@ export default function Settings(){
                                 setStartDate(newVal)
                                 console.log(newVal)
                             }}
+                            // TODO set default month to startdate month
                             // modifiers={currentStartDate}
                             // modifiersStyles={{ booked: bookedStyle }}
                             className={"display-center justify-content-center align-items-center"}

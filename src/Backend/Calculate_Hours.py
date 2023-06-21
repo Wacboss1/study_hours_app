@@ -20,9 +20,9 @@ def filter_valid_hours(full_hours):
     return valid_hours
 
 
-def add_needed_columns(valid_hours, bonus_hours_list):
+def add_needed_columns(valid_hours, bonus_hours_list, start_date):
     # TODO format the weeks to start from week 1
-    valid_hours["Week"] = valid_hours["Check In Time"].dt.week
+    valid_hours["Week"] = (valid_hours["Check In Time"].dt.week - pd.to_datetime(start_date).week) + 1
     valid_hours["Minutes Gained"] = valid_hours["Check Out Time"] - valid_hours["Check In Time"]
     calculate_bonus_hours(valid_hours, bonus_hours_list)
     return valid_hours
@@ -56,12 +56,12 @@ def timedelta_to_hours(x):
     return round(x / timedelta(hours=1), 2)
 
 
-def calculate_study_hours(filepath, out_path, close_time, bonus_hours):
+def calculate_study_hours(filepath, out_path, close_time, bonus_hours, start_date):
     global closing_time
     closing_time = close_time
     all_hours = get_all_hours(filepath)
     valid_hours = filter_valid_hours(all_hours)
-    valid_hours = add_needed_columns(valid_hours, bonus_hours)
+    valid_hours = add_needed_columns(valid_hours, bonus_hours, start_date)
     summary_page = pd.DataFrame(columns=['Last Name', 'First Name', 'Total Hours'])
     names = all_hours.drop_duplicates(subset=['First Name', 'Last Name'])[['First Name', 'Last Name']].values
     writer = pd.ExcelWriter(out_path + "Study Hours " + time.strftime("%b %d %Y", time.localtime()) + ".xlsx", engine="openpyxl")

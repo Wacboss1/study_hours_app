@@ -110,7 +110,8 @@ def run_hours():
     file.save(filepath)
     close_time = get_config()["close time"]
     bonus_hours = get_bonus_hours(connection)
-    out_filepath = calculate_study_hours(filepath, backend_path, close_time, bonus_hours)
+    start_date = get_config()["start date"]
+    out_filepath = calculate_study_hours(filepath, backend_path, close_time, bonus_hours, start_date)
     set_filepath(backend_path + out_filepath)
     add_students_to_database(connection)
     connection.close()
