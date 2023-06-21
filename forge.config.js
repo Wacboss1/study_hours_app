@@ -29,9 +29,9 @@ module.exports = {
         }
     ],
     hooks:{
-        prePackage: async (forgeConfig, platform, arch) => {
-            child_process.execSync("pyinstaller src/Backend/backend.spec " +
-                "--distpath src/Backend/dist --workpath src/Backend/build")
+        generateAssets: async (forgeConfig, platform, arch) => {   
+            child_process.execSync("pyinstaller src/Backend/backend.spec" +
+                " --distpath src/Backend/dist -y --workpath src/Backend/build")
             child_process.execSync("npm run build")
         }
     }
