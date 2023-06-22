@@ -7,6 +7,7 @@ import {DayPicker} from "react-day-picker";
 import 'react-day-picker/dist/style.css';
 import {format} from "date-fns";
 import dayjs from "dayjs";
+import { type } from "@testing-library/user-event/dist/type";
 
 export default function Settings(){
     const [startDate, setStartDate] = useState(null)
@@ -18,10 +19,10 @@ export default function Settings(){
     }, [])
 
     useEffect(() => {
-        startDate ?
-            console.log(startDate.getMonth() + " " + defaultMonth):
-            console.log("No start date")
-    }, [startDate])
+        closingTime ?
+            console.log(typeof(closingTime))
+            :console.log("No close time")
+    }, [closingTime])
 
     let GetCurrentValues = async () => {
         try{
@@ -32,10 +33,17 @@ export default function Settings(){
                 .then((response) => response.json())
                 .then((bodyJson) => {
                     let dateString = bodyJson['start date']
-                if(dateString){
-                    let date = new Date(dateString)
-                    setStartDate(date)
-                }
+                    if(dateString){
+                        let date = new Date(dateString)
+                        setStartDate(date)
+                    }
+
+                    let closeTimeString = bodyJson['close time']
+                    if(closeTimeString)
+                    {
+                        setClosingTime(closeTimeString)
+                    }
+                    
                 })
             // setClosingTime(bodyJson['close time'])
         } catch (error){
@@ -46,7 +54,7 @@ export default function Settings(){
     let SaveSetting = async () => {
         let currentSettings = {
             "startDate": startDate,
-            "closingTime": `${closingTime.$H}:${closingTime.$m}`
+            "closingTime": closingTime.$d.toLocaleTimeString('it-IT')
         }
         await fetch(process.env.REACT_APP_BACKEND_URL + "/SaveSettings", {
             method: "POST",
@@ -55,7 +63,6 @@ export default function Settings(){
                 'Content-Type': 'application/json'
             }
         })
-            .then()
         console.log("Saving Settings")
     }
 
@@ -67,23 +74,28 @@ export default function Settings(){
         setShowModal(false)
     }
 
-    let defaultMonth = startDate ?
-                            startDate.getMonth() :
-                            null
-
     let dayPicker = startDate ?
-                    <DayPicker
-                    mode ="single"
-                    selected={startDate}
-                    onSelect={(newVal) => {
-                        setStartDate(newVal)
-                        console.log(newVal)
-                    }}
-                    defaultMonth={startDate}
+                        <DayPicker
+                        mode ="single"
+                        selected={startDate}
+                        onSelect={(newVal) => {
+                            setStartDate(newVal)
+                            console.log(newVal)
+                        }}
+                        defaultMonth={startDate}
+                        className={"display-center justify-content-center align-items-center"}/>
+                    : 
+                        <Spinner></Spinner>
 
-                    className={"display-center justify-content-center align-items-center"}/>
-                    : <Spinner></Spinner>
-
+    let timePicker = <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <TimePicker
+                            value={closingTime}
+                            views={['hours', 'minutes']}
+                            onChange={(newVal) => setClosingTime(newVal)}
+                        />
+                        {/* TODO use .$H and .$m to get the time to the database */}
+                    </LocalizationProvider>
+                        
     return(
         <div className={"text-center"}>
             <Row>
@@ -101,14 +113,7 @@ export default function Settings(){
                     <div>
                         <Form.Label>Closing Time</Form.Label>
                     </div>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimePicker
-                            value={closingTime}
-                            views={['hours', 'minutes']}
-                            onChange={(newVal) => setClosingTime(newVal)}
-                        />
-                        {/* TODO use .$H and .$m to get the time to the database */}
-                    </LocalizationProvider>
+                    {timePicker}
                 </div>
             </Row>
             <Row className={"mt-3"}>
