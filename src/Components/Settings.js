@@ -1,4 +1,4 @@
-import {Button, Col, Form, Modal, Row} from "react-bootstrap";
+import {Button, Col, Form, Modal, Row, Spinner} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
@@ -17,15 +17,26 @@ export default function Settings(){
         GetCurrentValues()
     }, [])
 
+    useEffect(() => {
+        startDate ?
+            console.log(startDate.getMonth() + " " + defaultMonth):
+            console.log("No start date")
+    }, [startDate])
+
     let GetCurrentValues = async () => {
         try{
             const response = await fetch(process.env.REACT_APP_BACKEND_URL + "/GetSettings",
                 {
                     method: 'GET'
                 })
-                let bodyJson = await response.json()
-                setStartDate(new Date(bodyJson['start date']))
-                console.log(startDate)
+                .then((response) => response.json())
+                .then((bodyJson) => {
+                    let dateString = bodyJson['start date']
+                if(dateString){
+                    let date = new Date(dateString)
+                    setStartDate(date)
+                }
+                })
             // setClosingTime(bodyJson['close time'])
         } catch (error){
             console.log(error)
@@ -56,6 +67,23 @@ export default function Settings(){
         setShowModal(false)
     }
 
+    let defaultMonth = startDate ?
+                            startDate.getMonth() :
+                            null
+
+    let dayPicker = startDate ?
+                    <DayPicker
+                    mode ="single"
+                    selected={startDate}
+                    onSelect={(newVal) => {
+                        setStartDate(newVal)
+                        console.log(newVal)
+                    }}
+                    defaultMonth={startDate}
+
+                    className={"display-center justify-content-center align-items-center"}/>
+                    : <Spinner></Spinner>
+
     return(
         <div className={"text-center"}>
             <Row>
@@ -64,18 +92,7 @@ export default function Settings(){
                         <div className={"justify-content-center"}>
                             <Form.Label>Start Date</Form.Label>
                         </div>
-                        <DayPicker
-                            mode ="single"
-                            selected={startDate}
-                            onSelect={(newVal) => {
-                                setStartDate(newVal)
-                                console.log(newVal)
-                            }}
-                            // TODO set default month to startdate month
-                            // modifiers={currentStartDate}
-                            // modifiersStyles={{ booked: bookedStyle }}
-                            className={"display-center justify-content-center align-items-center"}
-                        />
+                        {dayPicker}
                     </div>
                 </Col>
             </Row>
@@ -88,12 +105,7 @@ export default function Settings(){
                         <TimePicker
                             value={closingTime}
                             views={['hours', 'minutes']}
-                            format={"hh:mm"}
-                            onChange={(newVal) =>
-                            {
-                                setClosingTime(newVal)
-                                console.log(newVal)
-                            }}
+                            onChange={(newVal) => setClosingTime(newVal)}
                         />
                         {/* TODO use .$H and .$m to get the time to the database */}
                     </LocalizationProvider>
