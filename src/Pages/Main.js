@@ -22,17 +22,12 @@ function Main() {
                 <Tab eventKey={"bonus"} title={"Bonus Hours"}>
                     <BonusHours/>
                 </Tab>
+                <Tabs eventKey={"Settings"} title={"Settings"}>
+                    <Settings/>
+                </Tabs>
                 <Tab eventKey={"run"} title={"Run Study Hours"}>
                     <RunHours/>
                 </Tab>
-                <Tabs eventKey={"Settings"} title={"Settings"}>
-                {/*TODO Section to
-                    Change starting day
-                    Change closing time
-                    Clear the database
-                */}
-                    <Settings/>
-                </Tabs>
             </Tabs>
         </div>
     );

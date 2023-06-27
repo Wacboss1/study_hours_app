@@ -19,7 +19,7 @@ else:
 
 backend_path = backend_path + "\\"
 config_file_path = backend_path + "Config.json"
-
+db_path = backend_path + "SBHours.db"
 
 def initialize_values():
     connect_to_db()
@@ -37,9 +37,8 @@ def initialize_values():
 
 
 def connect_to_db():
-    conn = sqlite3.connect(backend_path + "SBHours.db")
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    # Change to Backend/SQL/CreateTables.sql when running from Electron
     with open(backend_path + 'SQL/CreateTables.sql', 'r') as table_script:
         cursor.executescript(table_script.read())
         conn.commit()
@@ -181,6 +180,13 @@ def save_settings():
     config_json["close time"] = response_json["closingTime"]
     save_config(config_json)
     return {"out": 200}
+
+@app.route("/ClearData", methods=["POST"])
+def clear_data():
+    os.remove(db_path)
+    os.remove(config_file_path)
+    initialize_values()
+    return {"out":200}
 
 if __name__ == '__main__':
     app.run()

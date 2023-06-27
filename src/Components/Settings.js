@@ -5,24 +5,18 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import {TimePicker} from "@mui/x-date-pickers";
 import {DayPicker} from "react-day-picker";
 import 'react-day-picker/dist/style.css';
-import {format} from "date-fns";
 import dayjs from "dayjs";
-import { type } from "@testing-library/user-event/dist/type";
 
 export default function Settings(){
     const [startDate, setStartDate] = useState(null)
     const [closingTime, setClosingTime] = useState(null)
-    const [showingModal, setShowModal] = useState(false)
-    
+    const [clearModal, setClearModal] = useState(false)
+    const [successModal, setSuccessModal] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
+
     useEffect(() => {
         GetCurrentValues()
     }, [])
-
-    useEffect(() => {
-        closingTime ?
-            console.log(typeof(closingTime))
-            :console.log("No close time")
-    }, [closingTime])
 
     let GetCurrentValues = async () => {
         try{
@@ -41,10 +35,12 @@ export default function Settings(){
                     let closeTimeString = bodyJson['close time']
                     if(closeTimeString)
                     {
-                        setClosingTime(closeTimeString)
+                        setClosingTime(dayjs(closeTimeString, "H:mm"))
                     }
                     
-                })
+                }).then(
+                    setIsLoading(false)
+                )
             // setClosingTime(bodyJson['close time'])
         } catch (error){
             console.log(error)
@@ -62,39 +58,93 @@ export default function Settings(){
             headers: {
                 'Content-Type': 'application/json'
             }
-        })
-        console.log("Saving Settings")
+        }).then(
+            setSuccessModal(true)
+        )
     }
 
     let ClearData = async () => {
         await fetch(process.env.REACT_APP_BACKEND_URL + "/ClearData", {
             method: "POST"
+        }).then(() => {
+            setStartDate(null)
+            setClosingTime(dayjs("23:59", "H:mm"))
+            setClearModal(false)
         })
-        console.log("Clearing Data")
-        setShowModal(false)
     }
 
-    let dayPicker = startDate ?
-                        <DayPicker
-                        mode ="single"
-                        selected={startDate}
-                        onSelect={(newVal) => {
-                            setStartDate(newVal)
-                            console.log(newVal)
-                        }}
-                        defaultMonth={startDate}
-                        className={"display-center justify-content-center align-items-center"}/>
-                    : 
+    let dayPicker = isLoading ?
                         <Spinner></Spinner>
+                    : 
+                        <DayPicker
+                            mode ="single"
+                            selected={startDate}
+                            onSelect={(newVal) => setStartDate(newVal)}
+                            defaultMonth={startDate}
+                            className={"display-center justify-content-center align-items-center"}/>
+                        
 
-    let timePicker = <LocalizationProvider dateAdapter={AdapterDayjs}>
+    let timePicker = <LocalizationProvider 
+                        dateAdapter={AdapterDayjs}>
                         <TimePicker
-                            value={closingTime}
                             views={['hours', 'minutes']}
+                            value={closingTime}
                             onChange={(newVal) => setClosingTime(newVal)}
                         />
-                        {/* TODO use .$H and .$m to get the time to the database */}
                     </LocalizationProvider>
+
+    let clearDataModal = <Modal 
+                            centered
+                            show={clearModal} 
+                            onHide={() => {setClearModal(false)}} 
+                            className={"text-center"}>
+                            <Modal.Header>
+                                <b>Are you sure you wan to delete all data?</b>
+                            </Modal.Header>
+                            <Modal.Body>
+                                This will remove the following
+                                <br/>
+                                <br/>
+                                Start date
+                                <br/>
+                                closing time
+                                <br/>
+                                All students time tracked
+                                <br/>
+                                Any bonus hours dates set
+                                <br/>
+                                <br/>
+                                Would you still like to continue?
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <div>
+                                    <Button 
+                                        variant={"secondary"}
+                                        onClick={() => setClearModal(false)}>Cancel</Button>
+                                </div>
+                                <Button variant={"danger"} onClick={ClearData}>Confirm</Button>
+                            </Modal.Footer>
+                        </Modal>
+    
+    let confirmSuccessModal = <Modal 
+                            centered
+                            show={successModal} 
+                            onHide={() => {setSuccessModal(false)}} 
+                            className={"text-center"}>
+                            <Modal.Header>
+                                <b>Save Successful</b>
+                            </Modal.Header>
+                            <Modal.Body>
+                                Your settings have been saved
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <div>
+                                    <Button 
+                                        variant={"success"}
+                                        onClick={() => setSuccessModal(false)}>Ok</Button>
+                                </div>
+                            </Modal.Footer>
+                        </Modal>
                         
     return(
         <div className={"text-center"}>
@@ -118,17 +168,15 @@ export default function Settings(){
             </Row>
             <Row className={"mt-3"}>
                 <div>
+                    {/* TODO open modal to let user know  */}
                     <Button variant={"primary"} onClick={SaveSetting}>Save Settings</Button>
                 </div>
                 <div className={"mt-1"}>
-                    <Button variant={"danger"} onClick={() => setShowModal(true)}>Clear Data</Button>
+                    <Button variant={"danger"} onClick={() => setClearModal(true)}>Clear Data</Button>
                 </div>
             </Row>
-            {/*TODO make is so you don't have to reload to leave modal*/}
-            <Modal show={showingModal}>
-                Testing
-                <Button variant={"danger"} onClick={ClearData}>Confirm</Button>
-            </Modal>
+            {clearDataModal}
+            {confirmSuccessModal}
         </div>
     )
 }
