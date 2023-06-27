@@ -6,7 +6,6 @@ import 'react-day-picker/dist/style.css';
 export default function BonusHours(){
     const [range, setRange] = useState(null);
     const [multi, setMulti] = useState(0);
-    const [res, setResponse] = useState(null);
     const handleMultiChange = (event) => {
         setMulti(event.target.value)
     }
@@ -35,7 +34,6 @@ export default function BonusHours(){
                     'Content-Type': 'application/json' // Set the request header
                 }
             })
-            .then(response => setResponse(response.status))
             .then(() => clearFields())
     }
 

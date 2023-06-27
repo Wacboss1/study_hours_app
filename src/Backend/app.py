@@ -117,7 +117,7 @@ def run_hours():
     os.remove(backend_path + file.filename)
     return send_file(out_filepath, as_attachment=True, download_name=out_filepath)
 
-
+@app.route("/GetBonusHours", methods=["GET"])
 def get_bonus_hours(conn):
     query = """
     SELECT start_date, end_date, multiplier
@@ -171,7 +171,6 @@ def add_students_to_database(con):
 def get_settings():
     return get_config()
 
-# TODO save settings to config file
 @app.route("/SaveSettings", methods=["POST"])
 def save_settings():
     config_json = get_config()
