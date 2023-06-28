@@ -23,30 +23,26 @@ export default function Settings() {
     }, [startDate])
 
     let GetValuesFromBackend = async () => {
-        try {
-            await fetch(process.env.REACT_APP_BACKEND_URL + "/GetSettings",
-                {
-                    method: 'GET'
-                })
-                .then((response) => response.json())
-                .then((bodyJson) => {
-                    let dateString = bodyJson['start date']
-                    if (dateString) {
-                        let date = new Date(dateString)
-                        setStartDate(date)
-                    }
+        await fetch(process.env.REACT_APP_BACKEND_URL + "/GetSettings",
+            {
+                method: 'GET'
+            })
+            .then((response) => response.json())
+            .then((bodyJson) => {
+                let dateString = bodyJson['start date']
+                if (dateString) {
+                    let date = new Date(dateString)
+                    setStartDate(date)
+                }
 
-                    let closeTimeString = bodyJson['close time']
-                    if (closeTimeString) {
-                        setClosingTime(dayjs(closeTimeString, "H:mm"))
-                    }
+                let closeTimeString = bodyJson['close time']
+                if (closeTimeString) {
+                    setClosingTime(dayjs(closeTimeString, "H:mm"))
+                }
 
-                }).then(
-                    setIsLoading(false)
-                )
-        } catch (error) {
-            console.log(error)
-        }
+            }).then(() => {
+                setIsLoading(false)
+            })
     }
 
     let SaveSetting = async () => {
