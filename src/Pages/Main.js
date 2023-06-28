@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import StudentList from "../Components/StudentList";
-import {Button, Tab, Tabs} from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
 import BonusHours from "../Components/BonusHours";
 import RunHours from "../Components/RunHours";
 import Settings from "../Components/Settings";
@@ -17,16 +17,16 @@ function Main() {
                 fill
             >
                 <Tab eventKey={"students"} title={"Students"}>
-                    <StudentList/>
+                    <StudentList />
                 </Tab>
                 <Tab eventKey={"bonus"} title={"Bonus Hours"}>
-                    <BonusHours/>
+                    <BonusHours />
                 </Tab>
                 <Tabs eventKey={"Settings"} title={"Settings"}>
-                    <Settings/>
+                    <Settings />
                 </Tabs>
                 <Tab eventKey={"run"} title={"Run Study Hours"}>
-                    <RunHours/>
+                    <RunHours />
                 </Tab>
             </Tabs>
         </div>

@@ -108,7 +108,7 @@ def run_hours():
     filepath = backend_path + file.filename
     file.save(filepath)
     close_time = get_config()["close time"]
-    bonus_hours = get_bonus_hours(connection)
+    bonus_hours = get_bonus_hours()
     start_date = get_config()["start date"]
     out_filepath = calculate_study_hours(filepath, backend_path, close_time, bonus_hours, start_date)
     set_filepath(backend_path + out_filepath)
@@ -117,8 +117,9 @@ def run_hours():
     os.remove(backend_path + file.filename)
     return send_file(out_filepath, as_attachment=True, download_name=out_filepath)
 
-@app.route("/GetBonusHours", methods=["GET"])
-def get_bonus_hours(conn):
+@app.route("/GetBonusDates", methods=["GET"])
+def get_bonus_hours():
+    conn = connect_to_db()
     query = """
     SELECT start_date, end_date, multiplier
     FROM BonusHours
