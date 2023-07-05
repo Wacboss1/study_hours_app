@@ -33,7 +33,6 @@ app.whenReady().then(() => {
   let backend_exe = isDev
     ? 'src/Backend/dist/backend/backend.exe'
     : join(process.resourcesPath, "backend/backend.exe")
-  console.log("Looking for backend in " + backend_exe)
   flaskServer = execFile(backend_exe, (error, stdout) => {
     if (error) {
       console.error(`Error executing the executable: ${error.message}`);
