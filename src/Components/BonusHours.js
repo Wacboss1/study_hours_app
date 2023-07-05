@@ -13,10 +13,6 @@ export default function BonusHours() {
         getBonusDates()
     }, [])
 
-    useEffect(() => {
-        console.log(bonusDates)
-    }, [bonusDates])
-
     const getBonusDates = async () => {
         await fetch(process.env.REACT_APP_BACKEND_URL + "/GetBonusDates", {
             method: "GET"
@@ -50,8 +46,6 @@ export default function BonusHours() {
         setMulti(event.target.value)
     }
 
-    
-
     let footer = "Please select a start and end date"
     if (range?.from) {
         if (!range.to) {
@@ -77,7 +71,6 @@ export default function BonusHours() {
                 "multi": multi
             }
         }
-        
 
         fetch(process.env.REACT_APP_BACKEND_URL + "/AddBonusHours",
             {
@@ -105,6 +98,7 @@ export default function BonusHours() {
         .bonusDate {
             color: red;
         }`
+        
     return (
         <div className={"text-center"}>
             <Container className={"centered-container"}>

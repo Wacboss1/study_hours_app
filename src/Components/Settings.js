@@ -18,10 +18,6 @@ export default function Settings() {
         GetValuesFromBackend()
     }, [])
 
-    useEffect(() => {
-        console.log(startDate)
-    }, [startDate])
-
     let GetValuesFromBackend = async () => {
         await fetch(process.env.REACT_APP_BACKEND_URL + "/GetSettings",
             {

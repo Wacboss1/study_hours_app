@@ -86,6 +86,7 @@ def save_config(data):
 def add_bonus_hours():
     connection = connect_to_db()
     request_json = request.get_json()
+    
     # SQL statement to insert a new row into the "BonusHours" table
     query = """
     INSERT INTO BonusHours (start_date, end_date, multiplier)

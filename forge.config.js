@@ -13,19 +13,19 @@ module.exports = {
                 name: "electron_quick_start"
             }
         },
+        // Only use on mac
+        // {
+        //     name: '@electron-forge/maker-dmg',
+        //     config: {
+        //       background: './assets/dmg-background.png',
+        //       format: 'ULFO'
+        //     }
+        // },
         {
             name: "@electron-forge/maker-zip",
             platforms: [
                 "darwin"
             ]
-        },
-        {
-            name: "@electron-forge/maker-deb",
-            config: {}
-        },
-        {
-            name: "@electron-forge/maker-rpm",
-            config: {}
         }
     ],
     hooks:{
