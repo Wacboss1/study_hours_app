@@ -32,3 +32,4 @@ src/Backend/SBHours.db
 src/Backend/Config.json
 out/
 .vscode/
+src/Backend/Study Hours*

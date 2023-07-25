@@ -5,13 +5,16 @@ const isDev = require('electron-is-dev');
 require('dotenv').config();
 
 let flaskServer;
+if (require('electron-squirrel-startup')) app.quit();
 
 function createWindow() {
   const win = new BrowserWindow({
     width: 400,
     height: 500,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: join(__dirname, 'preload.js')
     }
   });
 
@@ -25,8 +28,6 @@ function createWindow() {
     win.webContents.openDevTools({ mode: 'detach' });
   }
 }
-
-if (require('electron-squirrel-startup')) app.quit();
 
 app.whenReady().then(() => {
   createWindow();

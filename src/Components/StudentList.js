@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner, Table } from 'react-bootstrap';
-import { DataGrid } from '@mui/x-data-grid';
+import ReactDOM from 'react-dom';
+
+const {electron} = window
 
 function StudentList() {
   const [students, setStudents] = useState([]);
@@ -54,6 +56,14 @@ function StudentList() {
     );
   }
 
+
+  const handleRowClick = (student) => {
+    const fullName = `${student['First Name']} ${student['Last Name']}`;
+    console.log(fullName)
+    // electron.ipcRenderer.on('student-name', (event, fullName) => {
+    
+    // });
+  }
   return (
     <Table>
       <thead>
@@ -71,7 +81,9 @@ function StudentList() {
       </thead>
       <tbody>
         {sortedStudents.map((student, index) => (
-          <tr className="text-center" key={index}>
+          <tr className="text-center" 
+          key={index}
+          onClick={() => handleRowClick(student)}>
             <td>{student['First Name']}</td>
             <td>{student['Last Name']}</td>
             <td>{student['Hours']}</td>
