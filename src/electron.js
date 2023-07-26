@@ -1,13 +1,13 @@
-const { app, BrowserWindow, ipcMain} = require('electron');
-const {execFile} = require("child_process")
-const {join} = require("path");
+const { app, BrowserWindow, ipcMain } = require('electron');
+const { execFile } = require("child_process")
+const { join } = require("path");
 const isDev = require('electron-is-dev');
 require('dotenv').config();
 
 let flaskServer;
 if (require('electron-squirrel-startup')) app.quit();
 
-function createWindow() {
+function CreatePrimaryWindow() {
   const win = new BrowserWindow({
     width: 400,
     height: 500,
@@ -19,9 +19,9 @@ function createWindow() {
   });
 
   win.loadURL(
-      isDev
-          ? 'http://localhost:3000'
-          : `file://${join(__dirname, '../build/index.html')}`
+    isDev
+      ? 'http://localhost:3000'
+      : `file://${join(__dirname, '../build/index.html')}`
   );
 
   if (isDev) {
@@ -29,17 +29,19 @@ function createWindow() {
   }
 }
 
-function OpenStudentDetails () {
+function OpenStudentDetails(student) {
   const win = new BrowserWindow({
-    title: "Testing",
+    title: student,
     webPreferences: {
       nodeIntegration: true
     }
   })
+
+  win.loadURL(`file://${join(__dirname, '../public/StudentDetails.html')}`)
 }
 
 app.whenReady().then(() => {
-  createWindow();
+  CreatePrimaryWindow();
   let backend_exe = isDev
     ? 'src/Backend/dist/backend/backend.exe'
     : join(process.resourcesPath, "backend/backend.exe")
@@ -61,7 +63,9 @@ app.whenReady().then(() => {
     console.error(`Flask server error: ${data}`);
   });
 
-  ipcMain.on('open-student-details', OpenStudentDetails)
+  ipcMain.on('open-student-details', (event, student) => {
+    OpenStudentDetails(student)
+  })
 });
 
 app.on('window-all-closed', () => {
@@ -72,6 +76,6 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
+    CreatePrimaryWindow();
   }
 });

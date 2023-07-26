@@ -55,7 +55,6 @@ function StudentList() {
 
   const handleRowClick = (student) => {
     const fullName = `${student['First Name']} ${student['Last Name']}`;
-    console.log(fullName)
     window.electronAPI.OpenStudentDetails(fullName)
   }
 
@@ -76,9 +75,9 @@ function StudentList() {
       </thead>
       <tbody>
         {sortedStudents.map((student, index) => (
-          <tr className="text-center" 
-          key={index}
-          onClick={() => handleRowClick(student)}>
+          <tr className="text-center"
+            key={index}
+            onClick={() => handleRowClick(student)}>
             <td>{student['First Name']}</td>
             <td>{student['Last Name']}</td>
             <td>{student['Hours']}</td>

@@ -4,6 +4,7 @@ import { DayPicker } from "react-day-picker";
 import { format } from "date-fns";
 import 'react-day-picker/dist/style.css';
 import { useEffect } from "react";
+
 export default function BonusHours() {
     const [range, setRange] = useState(null);
     const [multi, setMulti] = useState(0);
@@ -22,7 +23,7 @@ export default function BonusHours() {
                 let dates = []
                 body.forEach(dict => {
                     let dateRange = {}
-                    if(dict['end_date']){
+                    if (dict['end_date']) {
                         dateRange = {
                             from: new Date(dict['start_date']),
                             to: new Date(dict['end_date'])
@@ -33,7 +34,7 @@ export default function BonusHours() {
                             to: null
                         }
                     }
-                    dates.push( 
+                    dates.push(
                         dateRange
                     )
                 });
@@ -57,8 +58,8 @@ export default function BonusHours() {
 
     const SendBonusHours = () => {
         let hoursToAdd = {}
-        
-        if(range.to != null){
+
+        if (range.to != null) {
             hoursToAdd = {
                 "startDate": format(range.from, 'MM/dd/yyyy'),
                 "endDate": format(range.to, 'MM/dd/yyyy'),
@@ -84,7 +85,7 @@ export default function BonusHours() {
                 return [...prev, range]
             }))
             .then(() => clearFields())
-            
+
     }
 
     const clearFields = () => {
@@ -98,7 +99,7 @@ export default function BonusHours() {
         .bonusDate {
             color: red;
         }`
-        
+
     return (
         <div className={"text-center"}>
             <Container className={"centered-container"}>
@@ -110,8 +111,8 @@ export default function BonusHours() {
                             mode="range"
                             selected={range}
                             onSelect={setRange}
-                            modifiers={{bonusDates: bonusDates}}
-                            modifiersClassNames={{bonusDates: 'bonusDate'}}
+                            modifiers={{ bonusDates: bonusDates }}
+                            modifiersClassNames={{ bonusDates: 'bonusDate' }}
                             footer={footer}
                             className={"display-center justify-content-center align-items-center"}
                         />
