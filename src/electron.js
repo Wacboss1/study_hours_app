@@ -1,4 +1,4 @@
-const { app, BrowserWindow} = require('electron');
+const { app, BrowserWindow, ipcMain} = require('electron');
 const {execFile} = require("child_process")
 const {join} = require("path");
 const isDev = require('electron-is-dev');
@@ -29,6 +29,15 @@ function createWindow() {
   }
 }
 
+function OpenStudentDetails () {
+  const win = new BrowserWindow({
+    title: "Testing",
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+}
+
 app.whenReady().then(() => {
   createWindow();
   let backend_exe = isDev
@@ -51,6 +60,8 @@ app.whenReady().then(() => {
   flaskServer.stderr.on('data', (data) => {
     console.error(`Flask server error: ${data}`);
   });
+
+  ipcMain.on('open-student-details', OpenStudentDetails)
 });
 
 app.on('window-all-closed', () => {

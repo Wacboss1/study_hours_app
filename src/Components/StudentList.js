@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Col, Container, Row, Spinner, Table } from 'react-bootstrap';
-import ReactDOM from 'react-dom';
-
-const {electron} = window
 
 function StudentList() {
   const [students, setStudents] = useState([]);
@@ -56,14 +53,12 @@ function StudentList() {
     );
   }
 
-
   const handleRowClick = (student) => {
     const fullName = `${student['First Name']} ${student['Last Name']}`;
     console.log(fullName)
-    // electron.ipcRenderer.on('student-name', (event, fullName) => {
-    
-    // });
+    window.electronAPI.OpenStudentDetails(fullName)
   }
+
   return (
     <Table>
       <thead>
