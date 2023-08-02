@@ -8,18 +8,6 @@ if (require('electron-squirrel-startup')) app.quit();
 
 let flaskServer;
 
-
-// const pathCreator = (route) => {
-//   let indexPath;
-
-//   if(isDev) {
-//     indexPath = url.format({
-//       protocol: "http:",
-//       host: 'localhost:808'
-//     })
-//   }
-// }
-
 app.whenReady().then(() => {
   CreatePrimaryWindow();
   RunFlaskBackend();

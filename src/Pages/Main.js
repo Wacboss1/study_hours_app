@@ -6,7 +6,7 @@ import RunHours from "../Components/RunHours";
 import Settings from "../Components/Settings";
 
 
-function Main() {
+export default function Main() {
     const [key, setKey] = useState("students");
 
     return (
@@ -32,5 +32,3 @@ function Main() {
         </div>
     );
 }
-
-export default Main;
