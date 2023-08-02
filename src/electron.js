@@ -4,54 +4,25 @@ const { join } = require("path");
 const isDev = require('electron-is-dev');
 require('dotenv').config();
 
-let flaskServer;
 if (require('electron-squirrel-startup')) app.quit();
 
-function CreatePrimaryWindow() {
-  const win = new BrowserWindow({
-    width: 400,
-    height: 500,
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
-      preload: join(__dirname, 'preload.js')
-    }
-  });
+let flaskServer;
 
-  win.loadURL(
-    isDev
-      ? 'http://localhost:3000'
-      : `file://${join(__dirname, '../build/index.html')}`
-  );
 
-  if (isDev) {
-    win.webContents.openDevTools({ mode: 'detach' });
-  }
-}
+// const pathCreator = (route) => {
+//   let indexPath;
 
-function OpenStudentDetails(student) {
-  const win = new BrowserWindow({
-    title: student,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  })
-
-  win.loadURL(`file://${join(__dirname, '../public/StudentDetails.html')}`)
-}
+//   if(isDev) {
+//     indexPath = url.format({
+//       protocol: "http:",
+//       host: 'localhost:808'
+//     })
+//   }
+// }
 
 app.whenReady().then(() => {
   CreatePrimaryWindow();
-  let backend_exe = isDev
-    ? 'src/Backend/dist/backend/backend.exe'
-    : join(process.resourcesPath, "backend/backend.exe")
-  flaskServer = execFile(backend_exe, (error, stdout) => {
-    if (error) {
-      console.error(`Error executing the executable: ${error.message}`);
-      return;
-    }
-    console.log(`Executable output:\n${stdout}`);
-  });
+  RunFlaskBackend();
 
   // Print the Flask server output to the console
   flaskServer.stdout.on('data', (data) => {
@@ -67,6 +38,52 @@ app.whenReady().then(() => {
     OpenStudentDetails(student)
   })
 });
+
+function CreatePrimaryWindow() {
+  const win = new BrowserWindow({
+    width: 400,
+    height: 500,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: join(__dirname, 'preload.js')
+    }
+  });
+
+  win.loadURL(
+    isDev
+      ? 'http://localhost:3000?main'
+      : `file://${join(__dirname, '../build/index.html')}`
+  );
+
+  if (isDev) {
+    win.webContents.openDevTools({ mode: 'detach' });
+  }
+}
+
+function RunFlaskBackend(){
+  let backend_exe = isDev
+    ? 'src/Backend/dist/backend/backend.exe'
+    : join(process.resourcesPath, "backend/backend.exe")
+  flaskServer = execFile(backend_exe, (error, stdout) => {
+    if (error) {
+      console.error(`Error executing the executable: ${error.message}`);
+      return;
+    }
+    console.log(`Executable output:\n${stdout}`);
+  })
+}
+
+function OpenStudentDetails(student) {
+  const win = new BrowserWindow({
+    title: student,
+    webPreferences: {
+      nodeIntegration: true
+    }
+  })
+
+  win.loadURL('https://localhost:3000/?details')
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
