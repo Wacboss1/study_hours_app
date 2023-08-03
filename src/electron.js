@@ -1,6 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const { execFile } = require("child_process")
 const { join } = require("path");
+const url = require('url')
 const isDev = require('electron-is-dev');
 require('dotenv').config();
 
@@ -40,7 +41,7 @@ function CreatePrimaryWindow() {
 
   win.loadURL(
     isDev
-      ? 'http://localhost:3000?main'
+      ? `http://localhost:3000`
       : `file://${join(__dirname, '../build/index.html')}`
   );
 
@@ -70,7 +71,7 @@ function OpenStudentDetails(student) {
     }
   })
 
-  win.loadURL('https://localhost:3000/?details')
+  win.loadURL('http://localhost:3000/details')
 }
 
 app.on('window-all-closed', () => {
