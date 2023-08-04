@@ -1,8 +1,9 @@
 import React from "react";
+import { useParams } from "react-router-dom";
 
 export default function StudentDetails() {
-    // const [studentName, setStudentName] = useState(props.studentName)
+    let student = useParams().student;
     return (
-        <p>Student Details</p>
+        <p>{student}</p>
     )
 }

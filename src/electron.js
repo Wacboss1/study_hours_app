@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
+const {createFileRoute, createURLRoute} = require('electron-router-dom')
 const { execFile } = require("child_process")
 const { join } = require("path");
 const url = require('url')
@@ -30,6 +31,7 @@ app.whenReady().then(() => {
 
 function CreatePrimaryWindow() {
   const win = new BrowserWindow({
+    title: 'SB Study Hours',
     width: 400,
     height: 500,
     webPreferences: {
@@ -39,16 +41,26 @@ function CreatePrimaryWindow() {
     }
   });
 
-  win.loadURL(
-    isDev
-      ? `http://localhost:3000`
-      : `file://${join(__dirname, '../build/index.html')}`
-  );
+  win.loadURL(GetURL('main'));
 
   if (isDev) {
     win.webContents.openDevTools({ mode: 'detach' });
   }
 }
+
+const GetURL = (route) => {
+  let url;
+  isDev
+    ? url = createURLRoute(
+      'http:localhost:3000',
+      route
+    )
+    : url = createURLRoute(
+      `file://${join(__dirname, '../build/index.html')}`,
+      route
+    )
+  return url
+} 
 
 function RunFlaskBackend(){
   let backend_exe = isDev
@@ -71,7 +83,7 @@ function OpenStudentDetails(student) {
     }
   })
 
-  win.loadURL('http://localhost:3000/details')
+  win.loadURL(GetURL(`details${"/" + student}`))
 }
 
 app.on('window-all-closed', () => {
