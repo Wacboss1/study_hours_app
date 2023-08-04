@@ -9,7 +9,6 @@ require('dotenv').config();
 if (require('electron-squirrel-startup')) app.quit();
 
 let flaskServer;
-
 app.whenReady().then(() => {
   CreatePrimaryWindow();
   RunFlaskBackend();
@@ -48,7 +47,7 @@ function CreatePrimaryWindow() {
   }
 }
 
-const GetURL = (route) => {
+function GetURL(route){
   let url;
   isDev
     ? url = createURLRoute(
@@ -61,6 +60,7 @@ const GetURL = (route) => {
     )
   return url
 } 
+
 
 function RunFlaskBackend(){
   let backend_exe = isDev
