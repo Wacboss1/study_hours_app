@@ -8,6 +8,7 @@ from flask import Flask, request, send_file
 from flask_cors import CORS
 
 from Calculate_Hours import calculate_study_hours
+from Update_Database import Update_Database
 
 app = Flask(__name__)
 CORS(app)
@@ -102,7 +103,7 @@ def add_bonus_hours():
 def run_hours():
     connection = connect_to_db()
     if 'File' not in request.files:
-        return 'No file part in the request'
+        return 'No file in the request'
     file = request.files['File']
     if file.filename == '':
         return 'No file selected'
@@ -111,7 +112,10 @@ def run_hours():
     close_time = get_config()["close time"]
     bonus_hours = get_bonus_hours()
     start_date = get_config()["start date"]
-    out_filepath = calculate_study_hours(filepath, backend_path, close_time, bonus_hours, start_date)
+    #TODO put every row of the file into the database
+    Update_Database(connection, filepath)
+    #TODO run calculate_study_hours on the database instead of the file
+    out_filepath = calculate_study_hours(connection, backend_path, close_time, bonus_hours, start_date)
     set_filepath(backend_path + out_filepath)
     add_students_to_database(connection)
     connection.close()

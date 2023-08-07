@@ -7,14 +7,20 @@ import pandas as pd
 pd.options.mode.chained_assignment = None
 
 
-def get_all_hours(doc):
-    full_hours = pd.read_excel(doc, engine='openpyxl')
+def get_all_hours(con):
+    full_hours = pd.read_sql('''
+                             SELECT 
+                                `index`, `First Name`, `Last Name`,`Check In Date`, `Check In Time`, `Check Out Date`, `Check Out Time`
+                             FROM
+                                `Check Ins`
+                             ''', con, index_col='index', parse_dates=['Check In Date', 'Check In Time', 'Check Out Date', 'Check Out Time'])
     full_hours = full_hours.sort_values(by=["Last Name", "First Name"])
     return full_hours
 
-
+ 
 def filter_valid_hours(full_hours):
     valid_hours = full_hours
+    print(type(valid_hours['Check In Time'][0]))
     valid_hours = valid_hours[valid_hours['Check In Time'].dt.dayofyear == valid_hours['Check Out Time'].dt.dayofyear]
     valid_hours = valid_hours[full_hours['Check Out Time'].dt.time <= pd.to_datetime(closing_time).time()]
     return valid_hours
@@ -36,8 +42,9 @@ def calculate_bonus_hours(valid_hours, bonus_hours):
 def get_multiplier(x, bonus_hours):
     value = 1
     for item in bonus_hours:
-        if is_between_dates(item['start_date'], item['end_date'], x):
-            value = item["multiplier"]
+        if(item['start_date'] and item['end_date']):
+            if is_between_dates(item['start_date'], item['end_date'], x):
+                value = item["multiplier"]
     return value
 
 
@@ -56,10 +63,10 @@ def timedelta_to_hours(x):
     return round(x / timedelta(hours=1), 2)
 
 
-def calculate_study_hours(filepath, out_path, close_time, bonus_hours, start_date):
+def calculate_study_hours(connection, out_path, close_time, bonus_hours, start_date):
     global closing_time
     closing_time = close_time
-    all_hours = get_all_hours(filepath)
+    all_hours = get_all_hours(connection)
     valid_hours = filter_valid_hours(all_hours)
     valid_hours = add_needed_columns(valid_hours, bonus_hours, start_date)
     summary_page = pd.DataFrame(columns=['Last Name', 'First Name', 'Total Hours'])

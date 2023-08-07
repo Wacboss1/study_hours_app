@@ -2,10 +2,10 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 export default function StudentDetails() {
-    let student = useParams().student;
+    let studentName = useParams().studentName;
     return (
         <div>
-            <p>{student}</p>
+            <p>{studentName}</p>
         </div>
     )
 }

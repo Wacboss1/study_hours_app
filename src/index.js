@@ -10,6 +10,6 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Router
       main={<Route path='/' Component={Main}/>}
-      details={<Route path='/:student' Component={StudentDetails}/>}
+      details={<Route path='/:studentName' Component={StudentDetails}/>}
     />
 );

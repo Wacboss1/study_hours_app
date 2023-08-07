@@ -13,3 +13,17 @@ CREATE TABLE
         end_date DATE,
         multiplier FLOAT NOT NULL
     );
+
+CREATE TABLE
+    IF NOT EXISTS `Check Ins`(
+        `index` INTEGER PRIMARY KEY,
+        `First Name` TEXT,
+        `Last Name` TEXT,
+        `Email` TEXT,
+        `Proctor` TEXT,
+        `Check In Date` DATE,
+        `Check In Time` DATETIME,
+        `Check Out Date` DATE,
+        `Check Out Time` DATETIME,
+        `Method` String(20)
+    )
