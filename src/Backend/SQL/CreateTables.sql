@@ -20,7 +20,7 @@ CREATE TABLE
         `First Name` TEXT,
         `Last Name` TEXT,
         `Email` TEXT,
-        `Proctor` TEXT,
+        `Proctor` FLOAT,
         `Check In Date` DATE,
         `Check In Time` DATETIME,
         `Check Out Date` DATE,

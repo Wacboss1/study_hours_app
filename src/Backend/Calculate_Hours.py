@@ -13,7 +13,10 @@ def get_all_hours(con):
                                 `index`, `First Name`, `Last Name`,`Check In Date`, `Check In Time`, `Check Out Date`, `Check Out Time`
                              FROM
                                 `Check Ins`
-                             ''', con, index_col='index', parse_dates=['Check In Date', 'Check In Time', 'Check Out Date', 'Check Out Time'])
+                             ''', 
+                             con, 
+                             index_col='index', 
+                             parse_dates=['Check In Date', 'Check In Time', 'Check Out Date', 'Check Out Time'])
     full_hours = full_hours.sort_values(by=["Last Name", "First Name"])
     return full_hours
 
@@ -28,7 +31,7 @@ def filter_valid_hours(full_hours):
 
 def add_needed_columns(valid_hours, bonus_hours_list, start_date):
     # TODO format the weeks to start from week 1
-    valid_hours["Week"] = (valid_hours["Check In Time"].dt.week - pd.to_datetime(start_date).week) + 1
+    valid_hours["Week"] = (valid_hours["Check In Time"].dt.isocalendar().week - pd.to_datetime(start_date).week) + 1
     valid_hours["Minutes Gained"] = valid_hours["Check Out Time"] - valid_hours["Check In Time"]
     calculate_bonus_hours(valid_hours, bonus_hours_list)
     return valid_hours

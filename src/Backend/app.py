@@ -36,7 +36,6 @@ def initialize_values():
             }
             json.dump(config_json, config_file)
 
-
 def connect_to_db():
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
@@ -45,10 +44,8 @@ def connect_to_db():
         conn.commit()
     return conn
 
-
 with app.app_context():
     initialize_values()
-
 
 @app.route("/GetStudents", methods=["GET"])
 def get_students():
@@ -64,7 +61,6 @@ def get_students():
     results = [dict(zip(columns, row)) for row in rows]
     return results
 
-
 @app.route("/SetCloseTime", methods=["POST"])
 def set_close_time():
     config_json = get_config()
@@ -72,16 +68,13 @@ def set_close_time():
     save_config(config_json)
     return {"status": 200}
 
-
 def get_config():
     with open(config_file_path, "r") as config_file:
         return json.load(config_file)
 
-
 def save_config(data):
     with open(config_file_path, "w") as config_file:
         json.dump(data, config_file)
-
 
 @app.route("/AddBonusHours", methods=["POST"])
 def add_bonus_hours():
@@ -98,7 +91,6 @@ def add_bonus_hours():
     connection.close()
     return {"status": 200}
 
-
 @app.route("/RunHours", methods=['POST'])
 def run_hours():
     connection = connect_to_db()
@@ -112,9 +104,9 @@ def run_hours():
     close_time = get_config()["close time"]
     bonus_hours = get_bonus_hours()
     start_date = get_config()["start date"]
-    #TODO put every row of the file into the database
+    # put every row of the file into the database
     Update_Database(connection, filepath)
-    #TODO run calculate_study_hours on the database instead of the file
+    # run calculate_study_hours on the database
     out_filepath = calculate_study_hours(connection, backend_path, close_time, bonus_hours, start_date)
     set_filepath(backend_path + out_filepath)
     add_students_to_database(connection)
@@ -146,7 +138,6 @@ def set_filepath(filepath):
     config_json = get_config()
     config_json['filepath'] = filepath
     save_config(config_json)
-
 
 def add_students_to_database(con):
     cursor = con.cursor()
@@ -192,6 +183,14 @@ def clear_data():
     os.remove(config_file_path)
     initialize_values()
     return {"out":200}
+
+@app.route("/GetDetails/<student_name>", methods=["GET"])
+def get_details(student_name):
+    first_name, last_name = student_name.split(" ")
+    con = connect_to_db()
+
+    
+    return last_name
 
 if __name__ == '__main__':
     app.run()
