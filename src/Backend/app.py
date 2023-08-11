@@ -188,9 +188,20 @@ def clear_data():
 def get_details(student_name):
     first_name, last_name = student_name.split(" ")
     con = connect_to_db()
-
-    
-    return last_name
+    cursor = con.cursor()
+    cursor.execute(
+        '''
+        SELECT *
+        FROM 'Check Ins'
+        WHERE 
+            `First Name` = ? AND
+            `Last Name` = ?
+        '''
+    , (first_name, last_name))
+    columns = [column[0] for column in cursor.description]
+    rows = cursor.fetchall()
+    results = [dict(zip(columns, row)) for row in rows]
+    return results
 
 if __name__ == '__main__':
     app.run()

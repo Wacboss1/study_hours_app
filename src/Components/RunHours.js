@@ -1,5 +1,5 @@
 import {Button, Spinner} from "react-bootstrap";
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import FileDropZone from "./FileDropZone";
 
 export default function RunHours() {
@@ -28,8 +28,8 @@ export default function RunHours() {
             })
             .catch(error => {
                     console.error('Error downloading file:', error);
-                }
-            ).then(() => setisLoading(false));
+            })
+            .then(() => setisLoading(false));
 
     }
 
