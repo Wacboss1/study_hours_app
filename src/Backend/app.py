@@ -196,12 +196,34 @@ def get_details(student_name):
         WHERE 
             `First Name` = ? AND
             `Last Name` = ?
+        ORDER BY 
+            `Check In Time` DESC
         '''
     , (first_name, last_name))
     columns = [column[0] for column in cursor.description]
     rows = cursor.fetchall()
     results = [dict(zip(columns, row)) for row in rows]
     return results
+
+@app.route("/EditRow", methods=['POST'])
+def edit_row():
+    updateRow = request.get_json()
+    con = connect_to_db()
+    cursor = con.cursor()
+    cursor.execute(
+        '''
+        UPDATE `Check Ins`
+        SET 
+            `Check In Time` = ?,
+            `Check Out Time` = ?,
+            `Edited` = 1
+        WHERE 
+            `index` = ?;
+        '''
+    , (updateRow['Check In Time'], updateRow['Check Out Time'], updateRow['index']))
+    con.commit()
+    con.close()
+    return {"ok": "200"}
 
 if __name__ == '__main__':
     app.run()

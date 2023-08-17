@@ -25,5 +25,6 @@ CREATE TABLE
         `Check In Time` DATETIME,
         `Check Out Date` DATE,
         `Check Out Time` DATETIME,
-        `Method` String(20)
+        `Method` String(20),
+        `Edited` BOOLEAN DEFAULT 0
     )

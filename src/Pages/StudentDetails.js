@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { json, useParams } from "react-router-dom";
 import { DataGrid } from "@mui/x-data-grid";
 import { Spinner } from "react-bootstrap";
 
@@ -11,10 +11,6 @@ export default function StudentDetails() {
     useEffect(() => {
         GetStudentDetails();
     }, [])
-
-    useEffect(() => {
-        console.log(studentCheckins)
-    }, [studentCheckins])
 
     const GetStudentDetails = async () => {
         try{
@@ -29,6 +25,17 @@ export default function StudentDetails() {
         }
     }
 
+    const editDatabase = async (data) => {
+        const respones = await fetch(process.env.REACT_APP_BACKEND_URL + '/EditRow', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8'
+            }
+        })
+        const responseJSON = await respones.json();
+    }
+
     if(isLoading){
         return(
             <div>
@@ -39,12 +46,21 @@ export default function StudentDetails() {
         let cols = [
             {field: 'First Name', headerName: 'First'},
             {field: 'Last Name', headerName: 'Last'},
-            {field: 'Check In Time', flex: 1},
-            {field: 'Check Out Time', flex: 1}
+            {field: 'Check In Time', editable: true,  flex: 1},
+            {field: 'Check Out Time', editable: true, flex: 1}
         ]
         return (
             <div>
-                <DataGrid rows={studentCheckins} columns={cols} getRowId={(row) => row.index}/>
+                <DataGrid 
+                    rows={studentCheckins} 
+                    columns={cols} 
+                    getRowId={(row) => row.index + 1}
+                    processRowUpdate={(updatedRow, originalRow) => {
+                        editDatabase(updatedRow)
+                    }}
+                    onProcessRowUpdateError={(error) => {
+                        //Ignore error
+                    }}/>
             </div>
         )
     }
