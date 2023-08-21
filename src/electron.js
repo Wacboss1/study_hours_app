@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const {createFileRoute, createURLRoute} = require('electron-router-dom')
-const { execFile } = require("child_process")
+const { execFile, exec } = require("child_process")
 const { join } = require("path");
 const url = require('url')
 const isDev = require('electron-is-dev');
@@ -10,9 +10,9 @@ if (require('electron-squirrel-startup')) app.quit();
 
 let flaskServer;
 app.whenReady().then(() => {
-  CreatePrimaryWindow();
   RunFlaskBackend();
-
+  RunReact();
+  CreatePrimaryWindow();
   // Print the Flask server output to the console
   flaskServer.stdout.on('data', (data) => {
     console.log(`Flask server output: ${data}`);
@@ -48,19 +48,16 @@ function CreatePrimaryWindow() {
 }
 
 function GetURL(route){
-  let url;
-  isDev
-    ? url = createURLRoute(
+  let url = createURLRoute(
       'http:localhost:3000',
-      route
-    )
-    : url = createURLRoute(
-      `file://${join(__dirname, '../build/index.html')}`,
       route
     )
   return url
 } 
 
+function RunReact(){
+  exec("cross-env BROWSER=none npm run start-react");
+}
 
 function RunFlaskBackend(){
   let backend_exe = isDev
