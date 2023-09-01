@@ -7,20 +7,20 @@ module.exports = {
         ]
     },
     makers: [
-        {
-            name: "@electron-forge/maker-squirrel",
-            config: {
-                name: "electron_quick_start"
-            }
-        },
-        // Only use on mac
         // {
-        //     name: '@electron-forge/maker-dmg',
+        //     name: "@electron-forge/maker-squirrel",
         //     config: {
-        //       background: './assets/dmg-background.png',
-        //       format: 'ULFO'
+        //         name: "electron_quick_start"
         //     }
         // },
+        // Only use on mac
+        {
+            name: '@electron-forge/maker-dmg',
+            config: {
+            background: './assets/dmg-background.png',
+            format: 'ULFO'
+            }
+        },
         {
             name: "@electron-forge/maker-zip",
             platforms: [
