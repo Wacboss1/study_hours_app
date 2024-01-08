@@ -18,7 +18,7 @@ if getattr(sys, 'frozen', False):
 else:
     backend_path = os.path.dirname(os.path.abspath(__file__))
 
-backend_path = backend_path + "\\"
+backend_path = backend_path + "/"
 config_file_path = backend_path + "Config.json"
 db_path = backend_path + "SBHours.db"
 
