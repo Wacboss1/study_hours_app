@@ -14,7 +14,7 @@ app = Flask(__name__)
 CORS(app)
 
 if getattr(sys, 'frozen', False):
-    backend_path = os.path.dirname(sys.executable)
+    backend_path = os.path.dirname(sys.executable) + "/_internal"
 else:
     backend_path = os.path.dirname(os.path.abspath(__file__))
 
