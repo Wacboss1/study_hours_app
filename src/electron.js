@@ -13,6 +13,7 @@ app.whenReady().then(() => {
   RunFlaskBackend();
   RunReact();
   CreatePrimaryWindow();
+
   // Print the Flask server output to the console
   flaskServer.stdout.on('data', (data) => {
     console.log(`Flask server output: ${data}`);
@@ -61,8 +62,8 @@ function RunReact(){
 
 function RunFlaskBackend(){
   let backend_exe = isDev
-    ? 'src/Backend/dist/backend/backend.exe'
-    : join(process.resourcesPath, "backend/backend.exe")
+    ? 'src/Backend/dist/backend/backend'
+    : join(process.resourcesPath, "backend/backend")
   flaskServer = execFile(backend_exe, (error, stdout) => {
     if (error) {
       console.error(`Error executing the executable: ${error.message}`);
