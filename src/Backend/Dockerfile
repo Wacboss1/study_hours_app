@@ -40,15 +40,16 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 
 RUN pip install gunicorn
 
-#Manage permissions for the database
-# RUN [ "chmod", "-R", "o+w", "../app" ]
-
-# Switch to the non-privileged user to run the application.
-USER appuser
-
 # Copy the source code into the container.
 COPY . .
 
+RUN ["rm", "-f", "SBHours.db"]
+
+#Manage permissions for the database
+RUN [ "chmod", "-R", "o+w", "../app" ]
+
+# Switch to the non-privileged user to run the application.
+USER appuser
 
 # Expose the port that the application listens on.
 EXPOSE 5000
