@@ -47,6 +47,10 @@ def connect_to_db():
 with app.app_context():
     initialize_values()
 
+@app.route("/")
+def hello():
+    return "Hi"
+
 @app.route("/GetStudents", methods=["GET"])
 def get_students():
     conn = connect_to_db()
@@ -64,7 +68,7 @@ def get_students():
 @app.route("/SetCloseTime", methods=["POST"])
 def set_close_time():
     config_json = get_config()
-    config_json['close time'] = request.get_json()['close time']
+    config_json['close time'] = request.get_json(force=True)['close time']
     save_config(config_json)
     return {"status": 200}
 
@@ -79,7 +83,7 @@ def save_config(data):
 @app.route("/AddBonusHours", methods=["POST"])
 def add_bonus_hours():
     connection = connect_to_db()
-    request_json = request.get_json()
+    request_json = request.get_json(force=True)
     
     # SQL statement to insert a new row into the "BonusHours" table
     query = """
@@ -171,7 +175,7 @@ def get_settings():
 @app.route("/SaveSettings", methods=["POST"])
 def save_settings():
     config_json = get_config()
-    response_json = request.get_json()
+    response_json = request.get_json(force=True)
     config_json["start date"] = response_json["startDate"]
     config_json["close time"] = response_json["closingTime"]
     save_config(config_json)
@@ -207,7 +211,7 @@ def get_details(student_name):
 
 @app.route("/EditRow", methods=['POST'])
 def edit_row():
-    updateRow = request.get_json()
+    updateRow = request.get_json(force=True)
     con = connect_to_db()
     cursor = con.cursor()
     cursor.execute(
@@ -226,4 +230,4 @@ def edit_row():
     return {"ok": "200"}
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

@@ -8,21 +8,10 @@ require('dotenv').config();
 
 if (require('electron-squirrel-startup')) app.quit();
 
-let flaskServer;
 app.whenReady().then(() => {
-  RunFlaskBackend();
   RunReact();
   CreatePrimaryWindow();
-  // Print the Flask server output to the console
-  flaskServer.stdout.on('data', (data) => {
-    console.log(`Flask server output: ${data}`);
-  });
-
-  // Print any errors from the Flask server to the console
-  flaskServer.stderr.on('data', (data) => {
-    console.error(`Flask server error: ${data}`);
-  });
-
+  
   ipcMain.on('open-student-details', (event, student) => {
     OpenStudentDetails(student)
   })
